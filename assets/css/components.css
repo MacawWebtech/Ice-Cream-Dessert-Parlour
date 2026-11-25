@@ -1,0 +1,313 @@
+/* ==========================================================================
+   CONE & CO. — SHARED COMPONENT & ALIGNMENT SYSTEM
+   Adapted from the Home-Cleaning-Housekeeping-Service reference architecture.
+   Brand tokens remain Strawberry Pink / Dark Chocolate / Vanilla Cream.
+   ========================================================================== */
+
+:root {
+  --layout-gutter: 30px;
+  --layout-gutter-mobile: 16px;
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+  --space-12: 48px;
+  --space-16: 64px;
+  --space-20: 80px;
+  --space-24: 96px;
+  --control-height: 48px;
+  --control-radius: 0px;
+  --motion-ease: cubic-bezier(.16, 1, .3, 1);
+}
+
+/* Global sizing and zero-overflow guard */
+*,
+*::before,
+*::after { box-sizing: border-box; }
+
+html,
+body {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: clip;
+}
+
+body { min-width: 320px; }
+
+main,
+header,
+footer,
+section,
+.full-bleed,
+.section {
+  min-width: 0;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+main > section { width: 100%; max-width: 100%; }
+
+:where(.header-inner, .header-actions, .hero, .split, .products, .menu-grid, .blog-grid,
+  .packages, .pair-grid, .quote-grid, .categories, .gallery-grid, .footer-grid,
+  .contact-grid, .form-grid, .article-layout, .product-detail, .auth, .visit,
+  .seasonal, .final-cta, .discovery-feature, .collection, .collection-items) > * {
+  min-width: 0;
+}
+
+:where(h1, h2, h3, h4, h5, h6, p, li, label, blockquote, figcaption, small, strong,
+  .eyebrow, .section-head, .product-info, .blog-card, .footer-grid, .footer-bottom) {
+  overflow-wrap: break-word;
+  text-wrap: pretty;
+}
+
+h1, h2, h3, h4, h5, h6 { text-wrap: balance; }
+
+img,
+svg,
+video,
+canvas { max-width: 100%; }
+
+/* Page gutter: desktop and tablet use 30px; mobile is set to 16px in responsive.css. */
+:where(.announcement, .header-inner, .section, .hero, .page-hero, .article-hero,
+  .footer, .final-cta, .coming-page, .error-page) {
+  padding-inline: var(--pad, var(--layout-gutter));
+}
+
+/* Consistent section rhythm and section-header axis */
+.section {
+  width: 100%;
+  padding-block: var(--space-16);
+}
+
+.section-head {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: min(100%, 760px);
+  margin: 0 auto var(--space-10);
+  text-align: center;
+}
+
+.section-head > .eyebrow { margin: 0 0 var(--space-3); line-height: 1; }
+.section-head h2 { margin: 0 0 var(--space-4); }
+.section-head p { width: min(100%, 570px); margin: 0; }
+.section-head > :last-child { margin-bottom: 0; }
+.eyebrow { line-height: 1.2; }
+
+/* Line-wise icon + label alignment */
+:where(.button, .underlink, .announcement a, .nav-link, .brand, .footer-grid a,
+  .footer-bottom a, .social a, .review-controls button, .filters button,
+  .discovery-tabs button, .back-top, .breadcrumb, .search, .newsletter,
+  .header-actions .icon-btn, .mobile-toggle) {
+  align-items: center;
+}
+
+:where(.button, .underlink, .announcement a, .nav-link, .footer-grid a,
+  .footer-bottom a, .social a, .review-controls button, .filters button,
+  .discovery-tabs button, .search, .newsletter):has(> svg, > i, svg, i[data-lucide]) {
+  display: inline-flex;
+  gap: var(--space-2);
+}
+
+:where(.button, .underlink, .announcement a, .nav-link, .brand, .icon-btn,
+  .mobile-toggle, .social a, .review-controls button, .back-top)
+  :where(svg, i, [data-lucide]) {
+  width: 18px;
+  height: 18px;
+  flex: 0 0 18px;
+  display: block;
+}
+
+.button {
+  display: inline-flex;
+  min-height: var(--control-height);
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  padding: 0 22px;
+  border-radius: var(--control-radius);
+  line-height: 1;
+  white-space: normal;
+  text-align: center;
+  transition: transform .25s var(--motion-ease), background-color .25s ease,
+    color .25s ease, border-color .25s ease, box-shadow .25s ease;
+}
+
+.button > *,
+.button svg,
+.button i { flex: 0 0 auto; }
+.button svg,
+.button i { width: 18px; height: 18px; }
+.button:hover { transform: translateY(-2px); }
+.button:focus-visible,
+.underlink:focus-visible,
+.icon-btn:focus-visible,
+.mobile-toggle:focus-visible,
+.filters button:focus-visible,
+.gallery-item:focus-visible,
+.review-controls button:focus-visible {
+  outline: 2px solid var(--pink);
+  outline-offset: 3px;
+}
+
+.header-inner { gap: var(--space-5); }
+.brand { display: inline-flex; flex: 0 0 auto; gap: 10px; line-height: 1; white-space: nowrap; }
+.brand-mark { flex: 0 0 auto; display: inline-grid; place-items: center; }
+.desktop-nav { display: flex; align-items: center; min-width: 0; }
+.nav-link { display: inline-flex; line-height: 1.2; white-space: nowrap; }
+.header-actions { display: flex; align-items: center; gap: var(--space-2); flex: 0 0 auto; }
+.icon-btn { display: inline-flex; align-items: center; justify-content: center; flex: 0 0 auto; width: 42px; height: 42px; }
+.mobile-toggle { align-items: center; justify-content: center; flex: 0 0 auto; }
+.header-cta { min-height: 42px; padding-inline: 14px; white-space: nowrap; }
+.announcement { gap: var(--space-4); }
+.announcement > *,
+.footer-bottom > * { min-width: 0; }
+
+/* Equal-height grid mechanics */
+:where(.products, .menu-grid, .blog-grid, .packages, .pair-grid, .quote-grid,
+  .categories, .gallery-grid, .footer-grid, .contact-grid, .form-grid, .collection-items) {
+  align-items: stretch;
+}
+
+:where(.products, .menu-grid, .blog-grid, .packages, .pair-grid, .quote-grid,
+  .categories, .gallery-grid) > * { min-width: 0; }
+
+:where(.product-card, .blog-card, .packages article, .pair-grid > *, .quote-grid > *) {
+  min-width: 0;
+}
+
+.product-card,
+.blog-card,
+.packages article {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.product-info {
+  display: flex;
+  align-items: flex-start;
+  flex: 1 0 auto;
+  min-width: 0;
+  gap: var(--space-3);
+}
+
+.product-info > div { flex: 1 1 auto; min-width: 0; }
+.product-info h3 { min-height: 2.3em; text-wrap: balance; }
+.product-info p { min-height: 2.7em; }
+.product-info > strong { flex: 0 0 auto; white-space: nowrap; }
+.product-card .underlink { margin-top: auto; align-self: flex-start; }
+
+/* Dessert product imagery keeps a stable portrait frame; editorial articles use 16:10. */
+.product-photo {
+  display: block;
+  width: 100%;
+  aspect-ratio: 4 / 5;
+  overflow: hidden;
+}
+.product-photo img { width: 100%; height: 100%; object-fit: cover; }
+
+.blog-card > a:first-child {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 16 / 10;
+  overflow: hidden;
+}
+.blog-card > a:first-child img { width: 100%; height: 100%; object-fit: cover; }
+.blog-card > div {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  align-items: flex-start;
+  min-width: 0;
+}
+.blog-card > div h3 { min-height: 2.4em; text-wrap: balance; }
+.blog-card > div p { min-height: 3em; }
+.blog-card .underlink { margin-top: auto; }
+.blog-card.featured { height: 100%; }
+.blog-card.featured > a:first-child { height: 100%; min-height: 0; aspect-ratio: auto; }
+
+.packages article { align-items: flex-start; }
+.packages article ul { width: 100%; }
+.packages article > button,
+.packages article > .button { margin-top: 14px; }
+.packages article > b { margin-top: auto; }
+.packages article > button { flex: 0 0 auto; }
+
+.category { height: 100%; min-height: 380px; }
+.category img { width: 100%; height: 100%; object-fit: cover; }
+.gallery-item { min-width: 0; }
+.gallery-item img { width: 100%; height: 100%; object-fit: cover; }
+
+/* Image ratios for supporting editorial compositions */
+.pair-grid img { width: 100%; aspect-ratio: 16 / 10; height: auto; object-fit: cover; }
+.article-hero > img,
+.split-image img,
+.visit > img,
+.offer-feature > img,
+.discovery-feature > img { max-width: 100%; object-fit: cover; }
+
+/* Tables stay inside their own scrolling region and align cell content vertically. */
+.table-scroll { width: 100%; max-width: 100%; overflow-x: auto; overscroll-behavior-inline: contain; -webkit-overflow-scrolling: touch; }
+.table-scroll table { min-width: 560px; }
+table { width: 100%; border-collapse: collapse; }
+th, td { vertical-align: middle; }
+
+/* Form rows and footer columns are shrink-safe. */
+.form-grid > *,
+.contact-grid > *,
+.footer-grid > *,
+.footer-bottom > * { min-width: 0; }
+.form label { display: grid; align-content: start; gap: 7px; }
+.form input,
+.form select,
+.form textarea,
+.search input,
+.newsletter input { min-width: 0; max-width: 100%; }
+.form :where(input, select, textarea) { line-height: 1.4; }
+.newsletter { align-items: center; gap: var(--space-2); }
+.newsletter input { flex: 1 1 auto; }
+.newsletter .button { flex: 0 0 auto; }
+
+.footer-grid { align-items: start; }
+.footer-grid > div { min-width: 0; }
+.footer-grid > div > a:not(.brand) { display: inline-flex; width: fit-content; max-width: 100%; align-items: center; gap: 8px; }
+.footer-bottom { display: flex; align-items: center; justify-content: space-between; gap: var(--space-6); }
+.footer-bottom > span:last-child { display: flex; align-items: center; flex-wrap: wrap; gap: var(--space-4); }
+
+/* Shared inline alignment for utility rows */
+:where(.proof, .hero-foot, .review-controls, .filters, .actions, .social, .breadcrumb,
+  .auth-options, .countdown, .contact-details, .detail-options) { min-width: 0; }
+.review-controls { display: flex; align-items: center; gap: var(--space-3); }
+.social { display: flex; align-items: center; gap: var(--space-2); }
+.social a { display: inline-flex; align-items: center; justify-content: center; }
+.back-top { display: inline-flex; align-items: center; justify-content: center; }
+
+@media (min-width: 640px) {
+  :root { --pad: 30px; }
+}
+
+@media (max-width: 639px) {
+  :root { --pad: 16px; }
+  .section { padding-block: 44px; }
+  .section-head { margin-bottom: 28px; }
+  .section-head h2 { margin-bottom: 12px; }
+  .button { min-height: 48px; padding-inline: 17px; gap: 8px; }
+  .header-inner { gap: 10px; }
+  .header-actions { gap: 6px; }
+  .announcement { align-items: center; gap: 8px; }
+  .announcement > span { min-width: 0; }
+  .blog-card > a:first-child { aspect-ratio: 16 / 10; }
+  .blog-card.featured { display: flex; }
+  .blog-card.featured > a:first-child { width: 100%; aspect-ratio: 16 / 10; }
+  .product-info h3, .blog-card > div h3 { min-height: 0; }
+  .product-info p, .blog-card > div p { min-height: 0; }
+  .footer-bottom { align-items: flex-start; flex-direction: column; }
+  .footer-bottom > span:last-child { justify-content: flex-start; }
+  .map { margin-inline: var(--pad); width: calc(100% - 2 * var(--pad)); }
+}

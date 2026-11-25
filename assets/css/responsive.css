@@ -1,0 +1,1006 @@
+/* ============================================================================
+   CONE & CO. — RESPONSIVE LAYOUT SYSTEM
+   Adapted from the Home-Cleaning-Housekeeping-Service reference architecture.
+
+   Breakpoints:
+   - Small mobile: <= 639px
+   - Tablet:        640px - 1024px
+   - Desktop:       >= 1025px
+
+   Gutters:
+   - Desktop/tablet: 30px
+   - Mobile:         16px
+
+   Rules transferred from the reference:
+   - Collapse navigation at the tablet breakpoint (1024px).
+   - Convert 3/4-column card grids to 2 columns on tablet.
+   - Collapse 2-column editorial/form layouts on tablet and mobile.
+   - Collapse 3/4-column content grids to one column on mobile, except
+     intentionally compact dessert category/menu/gallery layouts.
+   - Keep odd tablet grid items centred at the same width as other cards.
+   - Keep all grid/flex children shrink-safe and prevent page-level overflow.
+   ============================================================================ */
+
+/* Shared responsive safety and consistent page gutters. */
+:root { --pad: 30px; }
+
+html,
+body {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: clip;
+}
+
+body { min-width: 320px; }
+
+:where(main, header, footer, section, .section, .full-bleed) {
+  min-width: 0;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+:where(.header-inner, .header-actions, .hero, .hero-copy, .hero-visual,
+  .products, .product-card, .product-info, .menu-grid, .blog-grid, .blog-card,
+  .categories, .category, .gallery-grid, .gallery-item, .packages,
+  .party-packages, .pair-grid, .quote-grid, .footer-grid, .contact-grid,
+  .form-grid, .article-layout, .article-layout article, .product-detail,
+  .detail-options, .auth, .auth-box, .visit, .seasonal, .final-cta,
+  .discovery-feature, .collection, .collection-items, .reasons,
+  .testimonials, .values, .intro-grid, .offer-feature, .form-section) > * {
+  min-width: 0;
+}
+
+:where(h1, h2, h3, h4, h5, h6, p, li, a, label, small, strong,
+  blockquote, figcaption, .eyebrow, .product-info, .footer-grid) {
+  overflow-wrap: break-word;
+}
+
+img,
+svg,
+video,
+canvas { max-width: 100%; }
+
+/* --------------------------------------------------------------------------
+   TABLET AND MOBILE HEADER — match reference <= 1024px behaviour
+   Keep the brand and utility controls aligned; move the primary order CTA
+   into the existing mobile drawer rather than compressing the header.
+   -------------------------------------------------------------------------- */
+@media (max-width: 1024px) {
+  .header-inner {
+    height: 76px;
+    padding-inline: 30px;
+    gap: 14px;
+    justify-content: space-between;
+  }
+
+  .desktop-nav {
+    display: none !important;
+  }
+
+  .header-actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    flex: 0 0 auto;
+    gap: 8px;
+    margin-inline-start: auto;
+  }
+
+  .header-actions .header-cta,
+  .header-actions .header-order {
+    display: none !important;
+  }
+
+  .header-actions .icon-btn,
+  .header-actions .mobile-toggle {
+    width: 42px;
+    height: 42px;
+    min-width: 42px;
+    min-height: 42px;
+    flex: 0 0 42px;
+  }
+
+  .mobile-toggle {
+    display: grid !important;
+    place-items: center;
+  }
+
+  .mobile-nav {
+    position: absolute;
+    inset-inline: 0;
+    top: 100%;
+    z-index: 110;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0;
+    padding: 14px 30px 24px;
+    background: var(--cream);
+    color: var(--choc);
+    border-top: 1px solid var(--line);
+    box-shadow: 0 16px 22px rgba(67, 37, 31, .10);
+  }
+
+  .mobile-nav[hidden] { display: none !important; }
+
+  .mobile-nav .nav-link {
+    display: flex;
+    align-items: center;
+    min-height: 48px;
+    padding: 11px 0;
+    border-bottom: 1px solid var(--line);
+    font-size: 16px;
+    line-height: 1.35;
+    white-space: normal;
+  }
+
+  .mobile-nav > .button {
+    display: inline-flex;
+    align-self: flex-start;
+    min-height: 46px;
+    margin-top: 16px;
+    padding-inline: 20px;
+  }
+
+  /* The editorial two-column compositions in the reference stack at tablet. */
+  .split,
+  .intro-grid,
+  .values,
+  .offer-feature,
+  .form-section,
+  .contact-grid,
+  .article-hero,
+  .product-detail,
+  .discovery-feature,
+  .reasons,
+  .testimonials,
+  .seasonal,
+  .visit,
+  .collection,
+  .error-page > main > .error-page {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 32px;
+  }
+
+  .page-hero {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 28px;
+    min-height: 0;
+    padding-block: 58px;
+  }
+
+  .page-hero > img {
+    width: 100%;
+    height: clamp(260px, 38vw, 390px);
+    object-fit: cover;
+  }
+
+  .article-hero {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 28px;
+    padding-block: 58px;
+  }
+
+  .article-hero > img {
+    width: 100%;
+    height: clamp(260px, 38vw, 390px);
+    object-fit: cover;
+  }
+
+  .article-hero > div { padding-inline: 0; }
+
+  .split-image { height: clamp(300px, 46vw, 440px); }
+  .seasonal { padding-block: 64px; }
+  .seasonal > div { padding-inline: 0; }
+  .seasonal > img { width: 100%; height: clamp(300px, 42vw, 420px); }
+  .visit > img { width: 100%; height: clamp(280px, 40vw, 400px); object-fit: cover; }
+
+  .form-section { align-items: stretch; }
+  .contact-grid { align-items: start; }
+  .contact-grid > form { width: 100%; }
+
+  .auth {
+    grid-template-columns: minmax(0, 1fr);
+    min-height: 0;
+  }
+
+  .auth-photo {
+    min-height: 300px;
+    max-height: 420px;
+  }
+
+  .auth-box {
+    width: 100%;
+    max-width: 620px;
+    margin-inline: auto;
+  }
+
+  .article-layout {
+    grid-template-columns: minmax(0, 1fr) 180px;
+    gap: 32px;
+  }
+
+  .article-layout article { min-width: 0; }
+
+  /* Reference: 3/4-column grids become two balanced columns on tablet. */
+  .products,
+  .menu-grid,
+  .blog-grid,
+  .categories,
+  .gallery-grid,
+  .packages,
+  .party-packages,
+  .pair-grid,
+  .quote-grid,
+  .pricing-grid,
+  .collection-items {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-items: stretch;
+  }
+
+  .products,
+  .menu-grid,
+  .blog-grid,
+  .packages,
+  .party-packages,
+  .pair-grid,
+  .quote-grid,
+  .categories,
+  .gallery-grid { gap: 28px 20px; }
+
+  .category { min-height: 300px; height: 300px; }
+  .gallery-grid { grid-auto-rows: clamp(150px, 22vw, 210px); }
+  .gallery-item img { width: 100%; height: 100%; object-fit: cover; }
+  .collection-items a img { width: 100%; height: clamp(190px, 26vw, 260px); object-fit: cover; }
+
+  .blog-card.featured {
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, .9fr);
+    align-items: stretch;
+    gap: 22px;
+  }
+
+  .blog-card.featured > a:first-child {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 16 / 10;
+  }
+
+  .blog-card.featured > div { min-width: 0; }
+
+  .footer-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 32px 28px;
+    padding-inline: 0;
+  }
+
+  .footer-grid > * { min-width: 0; }
+  .footer-grid .footer-brand { max-width: 100%; }
+  .footer-bottom { align-items: flex-start; gap: 20px; }
+  .footer-bottom > span:last-child { justify-content: flex-end; }
+
+  /* Keep inquiry fields usable without changing their desktop order. */
+  .form-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; }
+  .form-grid > * { min-width: 0; }
+  .table-scroll,
+  .table-responsive { max-width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+
+  /* Orphan cards use the same half-width as their row-mates and are centred. */
+  .products > :last-child:nth-child(odd),
+  .menu-grid > :last-child:nth-child(odd),
+  .blog-grid > :last-child:nth-child(odd),
+  .packages > :last-child:nth-child(odd),
+  .party-packages > :last-child:nth-child(odd),
+  .pair-grid > :last-child:nth-child(odd),
+  .quote-grid > :last-child:nth-child(odd) {
+    grid-column: 1 / -1;
+    justify-self: center;
+    width: calc((100% - 20px) / 2);
+    max-width: 100%;
+  }
+}
+
+/* Tablet lower range: preserve the reference 30px gutters and use a stacked
+   hero while maintaining two-column card grids. */
+@media (min-width: 640px) and (max-width: 767px) {
+  :root { --pad: 30px; }
+
+  .hero {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 30px;
+    min-height: 0;
+    padding: 58px 30px 30px;
+  }
+
+  .hero-copy { max-width: 620px; padding: 0; }
+  .hero h1 { font-size: clamp(54px, 8.5vw, 70px); }
+  .hero-visual { width: 100%; height: 380px; }
+  .hero-visual > img { width: 88%; }
+  .hero-foot { display: flex; justify-content: space-between; flex-wrap: wrap; }
+  .section { padding-block: 68px; }
+  .section-head { margin-bottom: 34px; }
+  .article-layout { grid-template-columns: minmax(0, 1fr); }
+  .article-layout aside { display: none; }
+}
+
+/* --------------------------------------------------------------------------
+   MOBILE — < 640px. Single clean content axis, no squeezed 3/4-column grids.
+   -------------------------------------------------------------------------- */
+@media (max-width: 639px) {
+  :root { --pad: 16px; }
+
+  .announcement {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 4px 10px;
+    min-height: 0;
+    padding: 8px 16px;
+    text-align: center;
+    font-size: 10px;
+    line-height: 1.4;
+    letter-spacing: .04em;
+  }
+
+  .announcement > span { min-width: 0; }
+  .announcement a { display: inline-flex; align-items: center; gap: 6px; font-size: 10px; }
+  .announcement svg { width: 14px; height: 14px; flex: 0 0 14px; }
+
+  .header-inner {
+    height: 68px;
+    padding-inline: 16px;
+    gap: 8px;
+  }
+
+  .brand {
+    min-width: 0;
+    flex: 0 1 auto;
+    gap: 8px;
+    font-size: 13px;
+    letter-spacing: .09em;
+  }
+
+  .brand small { font-size: 7px; margin-top: 4px; }
+  .brand-mark { width: 34px; height: 34px; flex: 0 0 34px; }
+  .brand-mark svg { width: 18px; height: 18px; }
+
+  .header-actions {
+    flex: 0 0 auto;
+    gap: 6px;
+    margin-inline-start: auto;
+  }
+
+  .header-actions .header-cta,
+  .header-actions .header-order { display: none !important; }
+
+  .header-actions .icon-btn,
+  .header-actions .mobile-toggle {
+    width: 38px;
+    height: 38px;
+    min-width: 38px;
+    min-height: 38px;
+    flex: 0 0 38px;
+  }
+
+  .header-actions .icon-btn svg,
+  .header-actions .mobile-toggle svg { width: 18px; height: 18px; }
+  .mobile-toggle { display: grid !important; place-items: center; }
+
+  .mobile-nav {
+    position: absolute;
+    inset-inline: 0;
+    top: 100%;
+    width: 100%;
+    max-height: min(75vh, 620px);
+    overflow-y: auto;
+    padding: 10px 16px 20px;
+  }
+
+  .mobile-nav .nav-link {
+    min-height: 46px;
+    padding-block: 11px;
+    font-size: 16px;
+  }
+
+  .mobile-nav > .button { width: 100%; align-self: stretch; margin-top: 14px; }
+
+  .section { padding: 54px 16px; }
+  .section-head { width: 100%; margin: 0 auto 30px; text-align: center; }
+  .section-head h2 { margin-bottom: 12px; font-size: clamp(34px, 9vw, 46px); line-height: 1.08; }
+  .section-head p { width: 100%; max-width: 560px; margin-inline: auto; }
+
+  /* Main homepage hero: copy and image share one left-aligned axis. */
+  .hero {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 28px;
+    min-height: 0;
+    padding: 42px 16px 28px;
+  }
+
+  .hero-copy,
+  .home-two .home2-copy { width: 100%; max-width: 600px; padding: 0; }
+  .hero h1 { max-width: 100%; margin-bottom: 18px; font-size: clamp(46px, 12vw, 62px); line-height: 1; }
+  .home-two .home2-kicker {
+    display: flex;
+    grid-column: auto;
+    grid-row: auto;
+    width: 100%;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px 14px;
+  }
+  .home-two .home2-copy { grid-column: auto; grid-row: auto; margin: 0; }
+  .home-two .home2-copy h1 { font-size: clamp(46px, 12vw, 62px); line-height: 1; }
+  .home-two .collage {
+    grid-column: auto;
+    grid-row: auto;
+    width: 100%;
+    height: clamp(270px, 82vw, 360px);
+  }
+  .home-two .hero-foot { grid-column: auto; width: 100%; }
+  .hero-copy > p { max-width: 560px; margin-bottom: 22px; font-size: 15px; line-height: 1.7; }
+  .hero .actions { display: grid; grid-template-columns: minmax(0, 1fr); gap: 10px; }
+  .hero .actions .button { width: 100%; }
+  .hero-visual { width: 100%; max-width: none; height: clamp(280px, 84vw, 360px); margin: 0; }
+  .hero-visual > img { width: 88%; height: 100%; margin-inline-start: auto; object-fit: cover; }
+  .float-note { left: 0; top: 7%; padding: 12px 14px; max-width: 68%; }
+  .float-note small { font-size: 9px; }
+  .float-note b { font-size: 18px; }
+  .stamp { width: 76px; height: 76px; right: 1%; top: 55%; font-size: 9px; }
+  .proof { margin-top: 26px; flex-wrap: wrap; }
+  .proof p { font-size: 12px; }
+  .hero-foot {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px 14px;
+    padding-top: 14px;
+    font-size: 9px;
+    line-height: 1.45;
+    letter-spacing: .08em;
+  }
+  .hero-foot > * { min-width: 0; }
+
+  /* Three/four-column reference grids no longer shrink into tiny slivers. */
+  .products {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 34px;
+  }
+
+  .product-card { width: 100%; max-width: 560px; margin-inline: auto; }
+  .product-photo { width: 100%; aspect-ratio: 4 / 5; height: auto; }
+  .product-info { display: flex; align-items: flex-start; gap: 12px; padding: 14px 0 5px; }
+  .product-info > div { flex: 1 1 auto; min-width: 0; }
+  .product-info h3 { min-height: 0; margin-bottom: 6px; font-size: 20px; line-height: 1.18; }
+  .product-info p { min-height: 0; font-size: 14px; line-height: 1.55; }
+  .product-info > strong { flex: 0 0 auto; font-size: 14px; }
+  .product-card .underlink { margin-top: 10px; }
+
+  /* Keep browseable collections compact, but give every tile enough width. */
+  .categories,
+  .menu-grid,
+  .collection-items,
+  .pair-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 22px 12px;
+  }
+
+  .category { height: clamp(190px, 54vw, 235px); min-height: 0; }
+  .category span { padding: 46px 12px 13px; }
+  .category small { font-size: 9px; line-height: 1.35; }
+  .category b { font-size: clamp(23px, 7vw, 30px); line-height: 1; }
+  .category span i { right: 12px; bottom: 17px; width: 15px; height: 15px; }
+
+  .menu-grid .product-card { max-width: none; }
+  .menu-grid .product-photo { aspect-ratio: 4 / 5; height: auto; }
+  .menu-grid .product-info { display: block; padding-top: 11px; }
+  .menu-grid .product-info h3 { font-size: clamp(16px, 4.5vw, 19px); }
+  .menu-grid .product-info p { font-size: 13px; line-height: 1.45; }
+  .menu-grid .product-info > strong { display: block; margin-top: 7px; font-size: 14px; }
+  .menu-grid .underlink { font-size: 10px; }
+
+  .gallery-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-auto-rows: clamp(125px, 39vw, 170px);
+    gap: 8px;
+  }
+  .gallery-item { min-width: 0; overflow: hidden; }
+  .gallery-item img { width: 100%; height: 100%; object-fit: cover; }
+
+  .blog-grid,
+  .packages,
+  .party-packages,
+  .pricing-grid,
+  .quote-grid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 26px;
+  }
+
+  .blog-card { width: 100%; }
+  .blog-card.featured {
+    grid-column: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+  .blog-card.featured > a:first-child { width: 100%; height: auto; aspect-ratio: 16 / 10; }
+  .blog-card > div h3 { min-height: 0; }
+  .blog-card > div p { min-height: 0; }
+
+  /* Reference-aligned one-column editorial sections. */
+  .split,
+  .intro-grid,
+  .values,
+  .offer-feature,
+  .form-section,
+  .contact-grid,
+  .article-hero,
+  .product-detail,
+  .discovery-feature,
+  .reasons,
+  .testimonials,
+  .seasonal,
+  .visit,
+  .collection,
+  .error-page > main > .error-page {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 26px;
+  }
+
+  .split { align-items: stretch; }
+  .split-image { height: clamp(240px, 72vw, 330px); }
+  .split > div:last-child { max-width: 100%; }
+  .split p,
+  .visit p,
+  .intro-grid p,
+  .seasonal p,
+  .contact-grid p { font-size: 15px; line-height: 1.7; }
+
+  .seasonal { padding: 54px 16px; }
+  .seasonal > div { padding: 0; }
+  .seasonal h2 { font-size: clamp(38px, 10vw, 48px); }
+  .seasonal > img { width: 100%; height: clamp(240px, 70vw, 320px); }
+  .sticker { width: 76px; height: 76px; right: 5%; top: auto; bottom: 18%; font-size: 9px; }
+
+  .reasons .section-head { width: 100%; margin: 0 0 18px; text-align: left; align-items: flex-start; }
+  .reasons article { grid-template-columns: 30px minmax(0, 1fr) 16px; gap: 12px; padding: 18px 0; }
+  .reasons h3 { font-size: 20px; line-height: 1.2; }
+  .reasons p { font-size: 14px; line-height: 1.55; }
+
+  .testimonials { padding: 54px 16px; }
+  .testimonials h2 { font-size: clamp(38px, 10vw, 48px); }
+  .testimonials p { max-width: 100%; font-size: 14px; }
+  .review-slider { min-height: 0; }
+  .review { max-width: 100%; }
+  .review blockquote { font-size: clamp(25px, 7vw, 32px); line-height: 1.25; }
+
+  .visit { gap: 24px; }
+  .visit > img,
+  .visit-image { width: 100%; height: clamp(230px, 68vw, 300px); object-fit: cover; }
+  .visit-details { padding: 0; }
+
+  .page-hero {
+    grid-template-columns: minmax(0, 1fr);
+    min-height: 0;
+    gap: 22px;
+    padding: 48px 16px;
+  }
+  .page-hero h1 { font-size: clamp(42px, 11vw, 58px); line-height: 1.02; margin-bottom: 14px; }
+  .page-hero p { font-size: 15px; line-height: 1.65; }
+  .page-hero > img { width: 100%; height: clamp(220px, 64vw, 290px); object-fit: cover; }
+
+  .offer-feature { margin-bottom: 42px; }
+  .offer-feature > img { width: 100%; height: clamp(230px, 65vw, 300px); object-fit: cover; }
+
+  .form-section { align-items: stretch; }
+  .form-section > form { width: 100%; min-width: 0; }
+  .form-grid { grid-template-columns: minmax(0, 1fr); gap: 16px; }
+  .form-grid > * { grid-column: auto !important; min-width: 0; }
+  .form label { min-width: 0; }
+  .form :where(input, select, textarea) { width: 100%; min-width: 0; max-width: 100%; }
+  .form-panel { width: 100%; max-width: 100%; padding: 22px 18px; }
+  .form-panel h2 { font-size: 28px; }
+
+  .contact-grid { align-items: stretch; }
+  .contact-details { grid-template-columns: minmax(0, 1fr); gap: 16px; }
+  .map { width: calc(100% - 32px); height: 250px; margin: 0 16px 54px; }
+
+  .menu-toolbar,
+  .blog-tools { display: grid; grid-template-columns: minmax(0, 1fr); gap: 14px; }
+  .filters { max-width: 100%; overflow-x: auto; flex-wrap: nowrap; justify-content: flex-start; gap: 8px; padding-bottom: 8px; -webkit-overflow-scrolling: touch; }
+  .filters button { flex: 0 0 auto; white-space: nowrap; }
+  .search { width: 100%; min-width: 0; }
+  .search input { width: 100%; min-width: 0; }
+
+  .article-hero { padding: 48px 16px; gap: 22px; }
+  .article-hero h1 { font-size: clamp(40px, 10.5vw, 56px); }
+  .article-hero > img { width: 100%; height: clamp(220px, 64vw, 290px); }
+  .article-layout { grid-template-columns: minmax(0, 1fr); gap: 0; padding-top: 42px; }
+  .article-layout aside { display: none; }
+  .article-layout article { min-width: 0; font-size: 16px; line-height: 1.75; }
+
+  .product-detail { grid-template-columns: minmax(0, 1fr); gap: 26px; padding-top: 8px; }
+  .detail-image { width: 100%; height: clamp(260px, 78vw, 340px); }
+  .product-detail h1 { font-size: clamp(38px, 10vw, 48px); }
+  .detail-options { grid-template-columns: minmax(0, 1fr) 100px; gap: 12px; }
+
+  .collection { padding: 50px 16px; gap: 24px; }
+  .collection-items { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+  .collection-items a:last-child { display: block; }
+  .collection-items a img { width: 100%; height: clamp(130px, 42vw, 175px); object-fit: cover; }
+  .collection h2 { font-size: clamp(36px, 9vw, 44px); }
+
+  .pair-grid img { width: 100%; height: auto !important; aspect-ratio: 16 / 10; object-fit: cover; }
+  .pricing-grid { grid-template-columns: minmax(0, 1fr); }
+  .pricing-card.featured { transform: none; }
+
+  .auth { grid-template-columns: minmax(0, 1fr); }
+  .auth-photo { min-height: 240px; max-height: 300px; }
+  .auth-photo > div { left: 20px; right: 20px; bottom: 20px; }
+  .auth-photo h1 { font-size: clamp(36px, 9vw, 44px); }
+  .auth-box { width: 100%; max-width: 560px; padding: 34px 20px; margin-inline: auto; }
+
+  .error-page > main > .error-page {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 24px;
+    padding: 48px 16px;
+  }
+  .error-page .error-img { width: 100%; height: clamp(230px, 70vw, 300px); max-width: 460px; }
+  .error-page .actions { display: grid; grid-template-columns: minmax(0, 1fr); }
+  .error-page .actions .button { width: 100%; }
+
+  .coming-page > main > .coming-page {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto auto auto;
+    gap: 18px;
+    padding: 18px 16px 48px;
+  }
+  .coming-page > main > .coming-page > .brand { grid-column: auto; }
+  .coming-page > main > .coming-page > div { padding: 0; }
+  .coming-page > main > .coming-page > img { grid-row: auto; width: 100%; min-height: 0; height: clamp(230px, 68vw, 300px); object-fit: cover; }
+  .coming-page h1 { font-size: clamp(40px, 10vw, 52px); }
+  .countdown { display: flex; flex-wrap: wrap; gap: 8px; }
+  .countdown > div { width: 64px; height: 66px; }
+
+  /* Footer follows the reference's single-column mobile rhythm. */
+  .footer { padding: 48px 16px 26px; }
+  .footer-grid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 26px;
+    padding: 0 0 30px;
+  }
+  .footer-brand { grid-column: auto; }
+  .footer-grid h3 { font-size: 24px; }
+  .footer-grid > div > a:not(.brand) { width: fit-content; max-width: 100%; }
+  .footer-bottom { display: flex; flex-direction: column; align-items: center; gap: 12px; padding-top: 16px; text-align: center; }
+  .footer-bottom > span:last-child { justify-content: center; gap: 14px; }
+
+  .final-cta { display: block; padding: 52px 16px; }
+  .final-cta h2 { font-size: clamp(38px, 10vw, 46px); margin-bottom: 16px; }
+
+  .newsletter { display: flex; flex-wrap: wrap; width: 100%; max-width: 100%; gap: 8px; }
+  .newsletter input { flex: 1 1 180px; width: 100%; min-width: 0; }
+  .newsletter .button { min-height: 46px; }
+
+  .button { min-height: 48px; padding-inline: 17px; gap: 8px; }
+  .actions { display: flex; flex-wrap: wrap; align-items: stretch; gap: 10px; }
+  .actions > .button { flex: 1 1 100%; width: 100%; }
+  .center { margin-top: 28px; }
+  .back-top { right: 14px; bottom: 14px; width: 40px; height: 40px; }
+}
+
+/* Narrow phones: avoid cramped two-column menu cards and footer controls. */
+@media (max-width: 359px) {
+  .header-inner { gap: 6px; }
+  .brand { font-size: 12px; gap: 6px; }
+  .brand-mark { width: 30px; height: 30px; flex-basis: 30px; }
+  .header-actions { gap: 4px; }
+  .header-actions .icon-btn,
+  .header-actions .mobile-toggle { width: 34px; height: 34px; min-width: 34px; min-height: 34px; flex-basis: 34px; }
+  .menu-grid,
+  .collection-items { grid-template-columns: minmax(0, 1fr); }
+  .category { height: 190px; }
+  .hero h1 { font-size: 44px; }
+  .hero-foot { grid-template-columns: minmax(0, 1fr); }
+  .detail-options { grid-template-columns: minmax(0, 1fr); }
+}
+
+/* Tablet hero alignment: follow the reference and stack desktop split layouts.
+   Both homepage variants use one content axis until the desktop breakpoint. */
+@media (min-width: 768px) and (max-width: 1024px) {
+  .hero {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 32px;
+    min-height: 0;
+    padding: 64px 30px 32px;
+  }
+
+  .hero-copy,
+  .home2-copy {
+    width: 100%;
+    max-width: 680px;
+    padding: 0;
+  }
+
+  .hero h1 { font-size: clamp(52px, 7vw, 72px); }
+  .hero-visual {
+    width: 100%;
+    max-width: none;
+    height: clamp(340px, 46vw, 450px);
+    margin: 0;
+  }
+  .hero-visual > img { width: 88%; }
+
+  .home-two .home2-kicker {
+    grid-column: auto;
+    grid-row: auto;
+    width: 100%;
+    flex-wrap: wrap;
+    gap: 10px 18px;
+  }
+  .home-two .home2-copy {
+    grid-column: auto;
+    grid-row: auto;
+    margin: 0;
+  }
+  .home-two .collage {
+    grid-column: auto;
+    grid-row: auto;
+    width: 100%;
+    height: clamp(340px, 46vw, 440px);
+  }
+  .hero-foot {
+    display: flex;
+    grid-column: auto;
+    width: 100%;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 14px 24px;
+  }
+}
+
+/* Reduced-motion preference is retained from the reference. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
+  }
+}
+
+/* Mobile override for tablet orphan-card centring. Single-column mobile grids
+   must return to full-width cards instead of retaining the tablet half-width. */
+@media (max-width: 639px) {
+  .products > :last-child:nth-child(odd),
+  .blog-grid > :last-child:nth-child(odd),
+  .packages > :last-child:nth-child(odd),
+  .party-packages > :last-child:nth-child(odd),
+  .quote-grid > :last-child:nth-child(odd),
+  .pricing-grid > :last-child:nth-child(odd) {
+    grid-column: auto;
+    justify-self: stretch;
+    width: 100%;
+    max-width: none;
+  }
+
+  .products > :last-child:nth-child(odd) { max-width: 560px; }
+  .blog-grid > :last-child:nth-child(odd) { max-width: none; }
+}
+
+/* Utility pages use page classes on <body> as well as the inner section.
+   Keep the document shell in normal flow; only the inner section is a grid. */
+body.error-page,
+body.coming-page {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+}
+
+@media (max-width: 1024px) {
+  .footer-grid .newsletter {
+    display: flex;
+    flex-wrap: nowrap;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+  }
+
+  .footer-grid .newsletter input {
+    flex: 1 1 0;
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  .footer-grid .newsletter .button {
+    flex: 0 0 44px;
+    width: 44px;
+    min-width: 44px;
+  }
+
+  .coming-page > main > .coming-page > div { padding-inline: 0; }
+  .coming-page > main > .coming-page > img {
+    width: 100%;
+    height: clamp(280px, 40vw, 390px);
+    min-height: 0;
+    object-fit: cover;
+  }
+
+  .error-page .error-img { height: clamp(280px, 40vw, 390px); }
+  .error-img b { right: 8px; bottom: 18px; padding: 18px; font-size: 20px; }
+}
+
+@media (max-width: 639px) {
+  .footer-grid .newsletter { flex-wrap: nowrap; }
+  .coming-page > main > .coming-page > img { height: clamp(230px, 68vw, 300px); }
+  .error-page .error-img { height: clamp(230px, 70vw, 300px); }
+  .error-img b { right: 8px; bottom: 14px; padding: 16px; font-size: 18px; }
+}
+
+/* Reference footer columns are vertical link lists, not inline text runs. */
+.footer-grid > div > a:not(.brand) {
+  display: flex;
+  align-items: center;
+  width: fit-content;
+  max-width: 100%;
+  margin-block: 0 8px;
+  line-height: 1.55;
+  overflow-wrap: anywhere;
+}
+
+/* Pricing comparison table: follow the reference's responsive stacked-row
+   treatment instead of forcing users to pan across a clipped wide table. */
+@media (max-width: 1024px) {
+  .table-scroll {
+    width: 100%;
+    max-width: 100%;
+    overflow: visible;
+  }
+
+  .table-scroll table {
+    display: block;
+    width: 100%;
+    min-width: 0;
+  }
+
+  .table-scroll thead {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  .table-scroll tbody {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 12px;
+    width: 100%;
+  }
+
+  .table-scroll tbody tr {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    width: 100%;
+    min-width: 0;
+    padding: 14px 16px;
+    border: 1px solid var(--line);
+    background: rgba(255, 243, 226, .28);
+  }
+
+  .table-scroll tbody td {
+    display: grid;
+    grid-template-columns: minmax(112px, 34%) minmax(0, 1fr);
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    min-width: 0;
+    padding: 10px 0;
+    border: 0;
+    border-bottom: 1px solid var(--line);
+    white-space: normal;
+    overflow-wrap: anywhere;
+    text-align: start;
+  }
+
+  .table-scroll tbody td:first-child {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 3px;
+    padding-top: 2px;
+  }
+
+  .table-scroll tbody td:nth-child(2)::before {
+    content: "What's included";
+    font-size: 11px;
+    font-weight: 700;
+    line-height: 1.35;
+    color: var(--choc);
+  }
+
+  .table-scroll tbody td:nth-child(3)::before {
+    content: "Sample starting price";
+    font-size: 11px;
+    font-weight: 700;
+    line-height: 1.35;
+    color: var(--choc);
+  }
+
+  .table-scroll tbody td:nth-child(4) {
+    display: flex;
+    justify-content: flex-end;
+    border-bottom: 0;
+    padding-bottom: 0;
+  }
+
+  .table-scroll tbody td:nth-child(4) a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 40px;
+    padding: 0 14px;
+    border: 1px solid var(--choc);
+  }
+}
+
+@media (max-width: 639px) {
+  .table-scroll tbody tr { padding: 12px 14px; }
+  .table-scroll tbody td { grid-template-columns: minmax(96px, 36%) minmax(0, 1fr); gap: 10px; font-size: 14px; }
+  .table-scroll tbody td:nth-child(2)::before,
+  .table-scroll tbody td:nth-child(3)::before { font-size: 10px; }
+}
+
+/* Touch-friendly filter rails on phones. Keep the rail inside the page gutter;
+   overflow belongs to the rail, never to the document viewport. */
+@media (max-width: 639px) {
+  .menu-toolbar,
+  .blog-tools {
+    width: 100%;
+    min-width: 0;
+    align-items: stretch;
+  }
+
+  .filters {
+    display: flex;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    flex: 0 1 auto;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 8px;
+    padding: 2px 0 0;
+    overflow: visible;
+  }
+
+  .gallery-filters { justify-content: center; }
+
+  .filters button {
+    display: inline-flex;
+    flex: 0 0 auto;
+    align-items: center;
+    justify-content: center;
+    min-height: 42px;
+    padding: 0 14px;
+    gap: 8px;
+    font-size: 11px;
+    line-height: 1.2;
+    white-space: nowrap;
+  }
+}

@@ -1,0 +1,64 @@
+/* ==========================================================================
+   CONE & CO. — RTL LAYOUT MIRRORING
+   Layout direction is mirrored without translating content or forcing
+   text alignment changes. Numeric, email, phone and price strings stay LTR.
+   ========================================================================== */
+
+html[dir="rtl"] .header-inner,
+html[dir="rtl"] .header-actions,
+html[dir="rtl"] .announcement,
+html[dir="rtl"] .footer-bottom,
+html[dir="rtl"] .hero-foot,
+html[dir="rtl"] .desktop-nav,
+html[dir="rtl"] .mobile-nav,
+html[dir="rtl"] .footer-grid,
+html[dir="rtl"] .form-grid,
+html[dir="rtl"] .products,
+html[dir="rtl"] .categories,
+html[dir="rtl"] .blog-grid,
+html[dir="rtl"] .pair-grid,
+html[dir="rtl"] .quote-grid { direction: rtl; }
+
+html[dir="rtl"] body { text-align: left; }
+html[dir="rtl"] .nav-link::after { left: auto; right: 0; }
+html[dir="rtl"] .hero,
+html[dir="rtl"] .split,
+html[dir="rtl"] .seasonal,
+html[dir="rtl"] .reasons,
+html[dir="rtl"] .testimonials,
+html[dir="rtl"] .visit,
+html[dir="rtl"] .article-hero,
+html[dir="rtl"] .product-detail,
+html[dir="rtl"] .auth,
+html[dir="rtl"] .error-page,
+html[dir="rtl"] .coming-page,
+html[dir="rtl"] .discovery-feature,
+html[dir="rtl"] .collection { direction: rtl; }
+
+html[dir="rtl"] .hero-visual > img { margin-left: 0; margin-right: auto; }
+html[dir="rtl"] .float-note { left: auto; right: 0; }
+html[dir="rtl"] .proof p { margin: 0 14px 0 0; }
+html[dir="rtl"] .category span i { right: auto; left: 18px; }
+html[dir="rtl"] .split-image small { left: auto; right: 0; }
+html[dir="rtl"] .seasonal > div { padding-left: 0; padding-right: 7vw; }
+html[dir="rtl"] .review-controls { right: auto; left: 0; }
+html[dir="rtl"] .article-layout { direction: rtl; }
+html[dir="rtl"] .article-layout blockquote { padding-left: 0; padding-right: 22px; border-left: 0; border-right: 4px solid var(--pink); }
+html[dir="rtl"] .coming-page > div { padding-left: 0; padding-right: 5vw; }
+html[dir="rtl"] .collage .c1 { left: auto; right: 0; }
+html[dir="rtl"] .collage .c2 { right: auto; left: 0; }
+html[dir="rtl"] .collage .c3 { left: auto; right: 23%; }
+html[dir="rtl"] .collage span { right: auto; left: 4%; }
+html[dir="rtl"] .back-top { right: auto; left: 20px; }
+html[dir="rtl"] .map { direction: rtl; }
+
+html[dir="rtl"] :where(input[type="tel"], input[type="email"], input[type="url"], .detail-price, .product-info > strong, .ltr-preserve) {
+  direction: ltr;
+  unicode-bidi: embed;
+  text-align: left;
+}
+
+@media (max-width: 639px) {
+  html[dir="rtl"] .seasonal > div,
+  html[dir="rtl"] .coming-page > div { padding-right: 0; }
+}

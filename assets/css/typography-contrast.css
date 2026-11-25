@@ -1,0 +1,316 @@
+/* ===========================================================================
+   CONE & CO. — TYPOGRAPHY & CONTRAST AUDIT PATCH
+   Based on the 16px body / ~15px navigation scale in the Cleanora reference.
+   Keeps the target's exact brand palette and Playfair Display + Inter fonts.
+   This file loads last so it can correct legacy 8px–13px text declarations.
+   =========================================================================== */
+
+:root {
+  --type-body: 16px;
+  --type-body-small: 14px;
+  --type-nav: 15px;
+  --type-meta: 12px;
+  --pink-ink: #43251F;
+  --cream-ink: #FFF3E2;
+  --safe-cta-bg: #43251F;
+  --safe-cta-fg: #FFF3E2;
+}
+
+html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+body {
+  font-size: var(--type-body);
+  line-height: 1.7;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* Main content copy: remove the old 9–13px paragraph overrides. */
+main p {
+  font-size: var(--type-body) !important;
+  line-height: 1.7 !important;
+  opacity: .88;
+}
+main li { font-size: 15px; line-height: 1.65; }
+main label { font-size: 14px; line-height: 1.5; }
+
+/* Header and navigation hierarchy. */
+.announcement { font-size: 12px !important; line-height: 1.4; letter-spacing: .045em; }
+.announcement a { font-size: 12px !important; }
+.desktop-nav { gap: clamp(10px, 1.35vw, 20px); }
+.desktop-nav .nav-link,
+.mobile-nav .nav-link {
+  font-size: var(--type-nav) !important;
+  font-weight: 600;
+  line-height: 1.35;
+  letter-spacing: .015em;
+}
+.brand { font-size: 15px; }
+.brand small { font-size: 10px !important; }
+.rtl-btn { font-size: 12px !important; }
+.header-cta { font-size: 11px !important; }
+
+/* Section labels, links and buttons. */
+.eyebrow { font-size: 11px !important; line-height: 1.35; letter-spacing: .13em; }
+.underlink { font-size: 12px !important; line-height: 1.35; }
+.button {
+  min-height: 48px;
+  padding-inline: 20px;
+  gap: 8px;
+  font-size: 13px !important;
+  line-height: 1.2;
+  letter-spacing: .045em;
+}
+.icon-btn, .mobile-toggle { width: 42px; height: 42px; }
+.button svg, .button i { width: 18px; height: 18px; }
+
+/* Product, editorial, testimonial and detail copy. */
+.hero-copy > p, .page-hero p, .section-head p, .split p, .visit p,
+.seasonal p, .reasons p, .testimonials p, .blog-card p,
+.article-layout article, .product-detail p, .error-page p,
+.coming-page p, .discovery-feature p, .home2-copy p {
+  font-size: 16px !important;
+  line-height: 1.7 !important;
+}
+.proof p { font-size: 14px !important; line-height: 1.5 !important; }
+.product-info p { font-size: 14px !important; line-height: 1.5 !important; }
+.product-info h3 { font-size: 22px; line-height: 1.2; }
+.product-info > strong { font-size: 14px !important; }
+.product-photo > b, .detail-tag { font-size: 11px !important; line-height: 1.3; }
+.category small, .blog-card small, .collection-items small,
+.float-note small, .split-image small { font-size: 11px !important; line-height: 1.4; }
+.reasons article > b { font-size: 12px !important; }
+.blog-card h3 { font-size: clamp(22px, 2vw, 27px); line-height: 1.2; }
+.article-layout article { font-size: 16px !important; }
+.article-layout aside { font-size: 13px !important; }
+.breadcrumb { font-size: 13px !important; }
+.detail-options label, .detail-options select, .detail-options input,
+.accordions summary, .accordions p { font-size: 14px !important; }
+
+/* Tables, forms, footer and utility text. */
+th { font-size: 12px !important; line-height: 1.4; }
+td { font-size: 14px !important; line-height: 1.5; }
+td small { font-size: 12px !important; }
+.form label, .auth-options { font-size: 14px !important; }
+.form input, .form select, .form textarea,
+.search input, .newsletter input { font-size: 16px !important; }
+.footer-grid p, .footer-grid small { font-size: 14px !important; line-height: 1.6; }
+.footer-grid h4 { font-size: 12px !important; }
+.footer-grid > div > a:not(.brand) { font-size: 14px !important; line-height: 1.5; }
+.footer-bottom { font-size: 12px !important; line-height: 1.5; }
+.toast { font-size: 14px !important; }
+.hero-foot { font-size: 11px !important; line-height: 1.5; }
+.stamp { font-size: 12px !important; }
+.countdown small { font-size: 11px !important; }
+
+/* Consistent readable focus and click targets. */
+.icon-btn, .mobile-toggle, .review-controls button, .back-top { min-width: 42px; min-height: 42px; }
+:where(a, button, input, select, textarea):focus-visible {
+  outline: 2px solid var(--pink);
+  outline-offset: 3px;
+}
+
+/* Keep supporting copy legible on narrow screens too. */
+@media (max-width: 639px) {
+  body { font-size: 16px; }
+  .desktop-nav .nav-link, .mobile-nav .nav-link { font-size: 15px !important; }
+  .announcement, .announcement a { font-size: 11px !important; }
+  main p { font-size: 15px !important; }
+  .hero-copy > p, .page-hero p, .section-head p, .split p, .visit p,
+  .seasonal p, .reasons p, .testimonials p, .blog-card p,
+  .article-layout article, .product-detail p, .error-page p,
+  .coming-page p, .discovery-feature p, .home2-copy p {
+    font-size: 15px !important;
+    line-height: 1.65 !important;
+  }
+  .product-info p { font-size: 13px !important; }
+  .footer-grid > div > a:not(.brand), .footer-grid p, .footer-grid small { font-size: 13px !important; }
+  .button { min-height: 48px; padding-inline: 16px; font-size: 12px !important; }
+}
+
+/* Primary action: chocolate + vanilla carries readable text; pink remains the
+   brand accent on the border, focus ring and hover detail. Pink-on-vanilla and
+   vanilla-on-pink were not sufficiently legible for small action labels. */
+.button.primary {
+  background: var(--safe-cta-bg) !important;
+  color: var(--safe-cta-fg) !important;
+  border: 1px solid var(--pink) !important;
+}
+.button.primary:hover,
+.button.primary:focus-visible {
+  background: var(--safe-cta-bg) !important;
+  color: var(--safe-cta-fg) !important;
+  border-color: var(--pink) !important;
+  box-shadow: 0 0 0 2px rgba(232, 93, 117, .2);
+}
+
+/* Light mode: retain the pink section panels, but use chocolate ink on them. */
+html[data-theme="light"] .category-band,
+html[data-theme="light"] .testimonials,
+html[data-theme="light"] .menu-end,
+html[data-theme="light"] .collection,
+html[data-theme="light"] .map-placeholder {
+  color: var(--pink-ink);
+}
+html[data-theme="light"] .category-band .section-head h2 em,
+html[data-theme="light"] .testimonials h2 em { color: var(--pink-ink); }
+html[data-theme="light"] .brand-mark { color: var(--pink-ink); }
+html[data-theme="light"] .stamp,
+html[data-theme="light"] .sticker { color: var(--pink-ink); }
+html[data-theme="light"] .product-photo > b,
+html[data-theme="light"] .detail-tag { color: var(--pink-ink); }
+html[data-theme="light"] .back-top { color: var(--pink-ink); }
+
+/* Dark mode audit: keep pink as the accent, not as a low-contrast text surface.
+   Panels switch to chocolate with vanilla copy; all contrast pairs use only the
+   original three brand colours. */
+html[data-theme="dark"] .category-band,
+html[data-theme="dark"] .testimonials,
+html[data-theme="dark"] .menu-end,
+html[data-theme="dark"] .collection,
+html[data-theme="dark"] .map-placeholder {
+  background: #43251F !important;
+  color: #FFF3E2 !important;
+}
+html[data-theme="dark"] .category-band .section-head h2,
+html[data-theme="dark"] .category-band .section-head h2 em,
+html[data-theme="dark"] .testimonials h2,
+html[data-theme="dark"] .testimonials h2 em,
+html[data-theme="dark"] .menu-end h2,
+html[data-theme="dark"] .collection h2,
+html[data-theme="dark"] .collection-items,
+html[data-theme="dark"] .map-placeholder,
+html[data-theme="dark"] .map-placeholder :where(h2, h3, p, span, a) {
+  color: #FFF3E2 !important;
+}
+html[data-theme="dark"] .category-band .section-head h2 em,
+html[data-theme="dark"] .testimonials h2 em { color: #E85D75 !important; }
+
+html[data-theme="dark"] .brand-mark { color: #43251F; }
+html[data-theme="dark"] .stamp,
+html[data-theme="dark"] .sticker {
+  background: #43251F;
+  color: #FFF3E2;
+  border: 2px solid #E85D75;
+}
+html[data-theme="dark"] .product-photo > b,
+html[data-theme="dark"] .detail-tag {
+  background: #43251F;
+  color: #FFF3E2;
+  border: 1px solid #E85D75;
+}
+html[data-theme="dark"] .category { color: #FFF3E2; }
+html[data-theme="dark"] .proof span:not(:nth-child(2)) { color: #43251F; }
+html[data-theme="dark"] .back-top {
+  background: #43251F;
+  color: #FFF3E2;
+  border: 1px solid #E85D75;
+}
+html[data-theme="dark"] .auth-photo::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: rgba(67, 37, 31, .38);
+  pointer-events: none;
+}
+html[data-theme="dark"] .auth-photo > div {
+  z-index: 2;
+  padding: 20px;
+  background: rgba(67, 37, 31, .92);
+  color: #FFF3E2;
+}
+html[data-theme="dark"] :where(.form input, .form textarea, .form select,
+  .search input, .detail-options select, .detail-options input, .coming-news input) {
+  color: #FFF3E2 !important;
+  background-color: rgba(255, 243, 226, .08) !important;
+  border-color: rgba(255, 243, 226, .38) !important;
+  caret-color: #FFF3E2;
+}
+html[data-theme="dark"] :where(input, textarea, select)::placeholder {
+  color: #FFF3E2 !important;
+  opacity: .72;
+}
+html[data-theme="dark"] select option {
+  background: #43251F;
+  color: #FFF3E2;
+}
+html[data-theme="dark"] .newsletter input {
+  color: #FFF3E2 !important;
+  background: transparent !important;
+}
+html[data-theme="dark"] .newsletter input::placeholder {
+  color: #FFF3E2 !important;
+  opacity: .72;
+}
+
+/* Avoid muted opacity washing out copy in either theme. */
+html[data-theme="dark"] main p,
+html[data-theme="dark"] .footer-grid p,
+html[data-theme="dark"] .footer-grid small,
+html[data-theme="dark"] .footer-grid > div > a:not(.brand),
+html[data-theme="dark"] .footer-bottom {
+  opacity: .92;
+}
+
+/* Small accent labels must not rely on the slightly softer pink foreground. */
+html[data-theme="light"] .announcement a,
+html[data-theme="light"] .seasonal .eyebrow { color: #FFF3E2 !important; }
+html[data-theme="light"] .footer .eyebrow,
+html[data-theme="light"] .footer h4 { color: #FF9DB0 !important; }
+html[data-theme="dark"] .announcement a,
+html[data-theme="dark"] .seasonal .eyebrow { color: #43251F !important; }
+html[data-theme="dark"] .footer .eyebrow,
+html[data-theme="dark"] .footer h4 { color: #FF9DB0 !important; }
+html[data-theme="dark"] .proof span { background: #FFF3E2; color: #43251F; border-color: #43251F; }
+html[data-theme="light"] .footer-grid p,
+html[data-theme="light"] .footer-grid small,
+html[data-theme="light"] .footer-grid > div > a:not(.brand),
+html[data-theme="light"] .footer-bottom { opacity: 1; color: #FFF3E2; }
+html[data-theme="dark"] .footer-grid p,
+html[data-theme="dark"] .footer-grid small,
+html[data-theme="dark"] .footer-grid > div > a:not(.brand),
+html[data-theme="dark"] .footer-bottom { opacity: 1; color: #FFF3E2; }
+
+/* Complete accent-surface sweep: every pink content panel is paired with
+   dark ink in light mode and vanilla copy on chocolate in dark mode. */
+html[data-theme="light"] :where(.final-cta, .page-hero.pink, .values,
+  .party-packages, .map, .article-hero) {
+  color: #43251F;
+}
+html[data-theme="light"] :where(.final-cta, .page-hero.pink, .values,
+  .party-packages, .map, .article-hero) :where(h1, h2, h3, h4, p, small, span) {
+  color: #43251F;
+}
+html[data-theme="light"] :where(.final-cta, .page-hero.pink, .values,
+  .article-hero) :where(h1 em, h2 em) { color: #43251F !important; }
+
+html[data-theme="dark"] :where(.final-cta, .page-hero.pink, .values,
+  .party-packages, .map, .article-hero) {
+  background: #43251F !important;
+  color: #FFF3E2 !important;
+}
+html[data-theme="dark"] :where(.final-cta, .page-hero.pink, .values,
+  .party-packages, .map, .article-hero) :where(h1, h2, h3, h4, p, small, span, li) {
+  color: #FFF3E2;
+}
+html[data-theme="dark"] :where(.final-cta, .page-hero.pink, .values,
+  .article-hero) :where(h1 em, h2 em) { color: #E85D75 !important; }
+
+/* Small text placed directly on bright-pink chips is moved onto a high-contrast
+   chocolate/vanilla chip; the pink remains visible as the border accent. */
+html[data-theme="light"] :where(.product-photo > b, .detail-tag, .packages article label,
+  .split-image small, .collage span) {
+  background: #43251F !important;
+  color: #FFF3E2 !important;
+  border: 1px solid #E85D75;
+}
+html[data-theme="dark"] :where(.product-photo > b, .detail-tag, .packages article label,
+  .split-image small, .collage span, .error-img b) {
+  background: #43251F !important;
+  color: #FFF3E2 !important;
+  border: 1px solid #E85D75;
+}
+html[data-theme="light"] .error-img b {
+  color: #43251F;
+  border: 1px solid #43251F;
+}

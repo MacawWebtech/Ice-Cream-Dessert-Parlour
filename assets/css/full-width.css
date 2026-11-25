@@ -1,0 +1,506 @@
+/* ==========================================================================
+   FULL-WIDTH LAYOUT  (loaded last)
+   Every section spans the full viewport width (backgrounds run edge to edge)
+   and all content - header, announcement bar, sections, footer - sits on ONE
+   shared left/right gutter (--pad), so edges line up down the whole page.
+   ========================================================================== */
+
+/* One shared gutter. Tablet (30px) and mobile (16px) values are unchanged. */
+@media (min-width: 1025px) {
+  :root { --pad: clamp(32px, 4.5vw, 96px); }
+}
+
+/* 1. Sections: full width, no centred max-width caps */
+main > section,
+main > .section,
+.hero, .page-hero, .article-hero, .seasonal, .testimonials, .values,
+.final-cta, .menu-end, .collection, .xs, .split, .reasons, .visit,
+.intro-grid, .form-section, .contact-grid, .product-detail,
+.article-layout, .party-packages, .category-band, .error-page, .coming-page {
+  width: 100%;
+  max-width: none;
+  margin-inline: 0;
+  padding-inline: var(--pad);
+}
+
+/* Nested wrappers that were capped at 1280px now follow the full width */
+.reasons, .xs-grid, .xs-split, .h3-wrap, .h3-orbit {
+  max-width: none;
+  margin-inline: 0;
+}
+.xs-grid, .xs-split, .h3-wrap { width: 100%; }
+.h3-orbit { margin-inline: auto; }
+
+/* 2. Header, announcement bar and footer share the same gutter */
+.announcement,
+.header-inner,
+.mobile-nav,
+.breadcrumb,
+.footer { padding-inline: var(--pad); }
+.footer-grid,
+.footer-bottom { padding-inline: 0; }
+
+/* 3. Desktop indents (vw-based padding-left) removed so every column
+      starts on the section's own left edge */
+.page-hero > div,
+.article-hero > div,
+.values > div:first-child,
+.seasonal > div,
+.visit > div,
+.final-cta > div,
+.home2-copy,
+.coming-page > div { padding-inline: 0; }
+
+/* 4. Text columns use their column instead of a narrow fixed width */
+.split > div:last-child,
+.offer-feature > div,
+.hero-copy { max-width: none; }
+
+/* 5. Cards / media / map follow the gutter */
+.map { margin-inline: var(--pad); width: calc(100% - 2 * var(--pad)); }
+.hero-foot { padding-inline: 0; }
+.gallery-grid, .products, .categories, .blog-grid, .packages, .pair-grid,
+.collection-items, .menu-grid { width: 100%; }
+
+/* 6. Don't let anything create sideways scroll */
+html, body { overflow-x: clip; }
+
+/* ==========================================================================
+   FIXES
+   ========================================================================== */
+
+/* A. Dark mode: footer logo wordmark was dark brown on the near-black footer.
+      Keep mark + wordmark cream on the footer in every theme. */
+.footer .brand,
+html[data-theme="dark"] .footer .brand,
+html[data-theme="light"] .footer .brand { color: #FFF3E2; }
+.footer .brand-word,
+html[data-theme="dark"] .footer .brand-word,
+html[data-theme="light"] .footer .brand-word { color: #FFF3E2; fill: #FFF3E2; }
+
+/* B. "How it works" steps: centred to match the centred heading.
+      Number, title and copy share one centre line; dashed connector runs
+      from the edge of one circle to the next. */
+.xs-steps { --xs-gap: 24px; gap: var(--xs-gap); }
+.xs-step {
+  align-items: center;
+  text-align: center;
+  height: auto;
+}
+.xs-step > div { width: 100%; }
+.xs-step p { margin-inline: auto; max-width: 320px; }
+.xs-step::before {
+  top: 40px;
+  inset-inline-start: calc(50% + 44px);
+  inset-inline-end: calc(-50% - var(--xs-gap) + 44px);
+}
+.xs-step:last-child::before { display: none; }
+
+@media (max-width: 1100px) {
+  .xs-steps.xs-cols-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+@media (max-width: 767px) {
+  /* one step per row, still centred, no connector */
+  .xs-steps.xs-cols-3 { grid-template-columns: minmax(0, 1fr); gap: 36px; }
+  .xs-step {
+    flex-direction: column;
+    flex-wrap: nowrap;
+    align-items: center;
+    text-align: center;
+  }
+  .xs-step .xs-num { margin-bottom: 18px; }
+  .xs-step > div { flex: none; }
+  .xs-step::before { display: none; }
+}
+
+/* C. "This week on the counter" (home 2): cards go one by one on tablet and mobile */
+@media (max-width: 1024px) {
+  .h3-rail {
+    grid-auto-flow: row;
+    grid-auto-columns: auto;
+    grid-template-columns: minmax(0, 1fr);
+    overflow: visible;
+    scroll-snap-type: none;
+    gap: 22px;
+    margin-inline: 0;
+    padding: 0;
+  }
+  .h3-card { width: 100%; }
+}
+/* Tablet: each card is a wide row - photo left, details right */
+@media (min-width: 640px) and (max-width: 1024px) {
+  .h3-card { flex-direction: row; align-items: stretch; }
+  .h3-card .ph { flex: 0 0 300px; aspect-ratio: auto; min-height: 240px; }
+  .h3-card .body { justify-content: center; padding: 26px 28px; }
+  .h3-card h3 { font-size: 28px; }
+  .h3-card p { font-size: 14px; }
+}
+/* Mobile: photo on top, details below, one card per row */
+@media (max-width: 639px) {
+  .h3-rail { margin-inline: 0; padding-inline: 0; }
+  .h3-card .ph { aspect-ratio: 1 / .85; }
+}
+
+/* ==========================================================================
+   FIXES 3
+   ========================================================================== */
+
+/* 404 / coming-soon use <body class="error-page|coming-page">: the body itself
+   must never receive the section gutter */
+body.error-page, body.coming-page { padding-inline: 0; max-width: none; }
+
+/* A. Sticky navigation: header stays pinned to the top while scrolling.
+      (overflow-x:hidden on html/body used to break this - clip does not.) */
+.site-header {
+  position: -webkit-sticky;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+.site-header.scrolled { box-shadow: 0 8px 25px rgba(67, 37, 31, .12); }
+html[data-theme="dark"] .site-header.scrolled { box-shadow: 0 8px 25px rgba(0, 0, 0, .45); }
+html { scroll-padding-top: 100px; }
+
+/* B. "The afternoon pick-me-up": feature block + the three cards share the
+      section's edges; feature photo and copy are the same height */
+.offer-feature {
+  padding-inline: 0;
+  align-items: stretch;
+  gap: clamp(32px, 6vw, 96px);
+}
+.offer-feature > img { height: 100%; min-height: 420px; max-height: 560px; align-self: center; }
+.offer-feature > div { align-self: center; max-width: none; }
+.pair-grid { align-items: start; }
+.pair-grid > article { min-width: 0; }
+@media (max-width: 1024px) {
+  .offer-feature { grid-template-columns: minmax(0, 1fr); gap: 28px; margin-bottom: 44px; }
+  .offer-feature > img { height: clamp(260px, 52vw, 420px); min-height: 0; max-height: none; }
+}
+
+/* C. Stats ("48+", "12,000+" ...) centred under the centred heading */
+.xs-stat { align-items: center; text-align: center; }
+.xs-stat b, .xs-stat strong { text-align: center; }
+.xs-stat p { margin-inline: auto; text-align: center; }
+.h3-tile.stat { text-align: center; align-items: center; }
+
+/* D. "Life is uncertain. Eat dessert first." - always readable, any width.
+      ('main p' rules had shrunk the display line to 16px.) */
+.menu-end { gap: 18px 40px; }
+.menu-end p {
+  font-family: var(--display) !important;
+  font-weight: 600 !important;
+  font-size: clamp(34px, 5.2vw, 58px) !important;
+  line-height: 1.1 !important;
+  letter-spacing: -.03em;
+  margin: 0 !important;
+  opacity: 1 !important;
+}
+.menu-end p em { font-style: italic; }
+.menu-end > span { font-size: 11px; font-weight: 800; letter-spacing: .15em; opacity: 1; }
+@media (max-width: 1024px) {
+  .menu-end {
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    padding-block: 56px;
+    min-height: 0;
+  }
+}
+html[data-theme="dark"] .menu-end em { color: #E85D75 !important; }
+
+/* E. "Kind words" with a background photo.
+      Change the image here (path is relative to assets/css/). */
+.h3-kind {
+  --kind-words-image: url('../images/banners/banner-kind-words.jpg');
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  color: #FFF3E2;
+}
+.h3-kind::before,
+.h3-kind::after { content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none; }
+.h3-kind::before {
+  background-image: var(--kind-words-image);
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+.h3-kind::after {
+  background: linear-gradient(180deg, rgba(43, 22, 18, .82), rgba(43, 22, 18, .72) 50%, rgba(43, 22, 18, .86));
+}
+.h3-kind .h3-head h2,
+.h3-kind .h3-head .eyebrow,
+.h3-kind .h3-head p { color: #FFF3E2 !important; }
+.h3-kind .h3-head h2 em { color: #E85D75 !important; }
+.h3-kind .h3-quote {
+  background: rgba(43, 22, 18, .55);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+  border-color: rgba(255, 243, 226, .28);
+  color: #FFF3E2;
+}
+.h3-kind .h3-quote blockquote,
+.h3-kind .h3-quote footer,
+.h3-kind .h3-quote footer div { color: #FFF3E2 !important; }
+.h3-kind .h3-quote footer small { color: #FFF3E2 !important; opacity: .75 !important; }
+.h3-kind .h3-quote .st { color: #E85D75 !important; }
+.h3-kind .h3-quote footer span { background: #E85D75; color: #2B1511 !important; }
+
+/* Sticky nav must never slide away on scroll-down */
+.site-header,
+.site-header.m-hide { transform: none !important; }
+
+/* ==========================================================================
+   OFFERS - "Waffle & scoop duo / Shake break / Birthday sweet spot" cards
+   Equal cards at every width: same photo size, titles, copy and price lines
+   sit on shared rows. Tablet shows all three in one row (no orphan card).
+   ========================================================================== */
+body.offers-page .pair-grid { align-items: stretch; }
+body.offers-page .pair-grid > article {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  min-width: 0;
+  height: 100%;
+}
+body.offers-page .pair-grid > article > img {
+  display: block;
+  width: 100%;
+  height: auto !important;
+  aspect-ratio: 16 / 10;
+  object-fit: cover;
+}
+body.offers-page .pair-grid > article > h3 { margin: 16px 0 6px; }
+body.offers-page .pair-grid > article > p { flex: 1 1 auto; width: 100%; margin: 0 0 12px; }
+body.offers-page .pair-grid > article > b { margin-top: auto; }
+
+@media (min-width: 640px) and (max-width: 1024px) {
+  body.offers-page .pair-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 20px;
+  }
+  body.offers-page .pair-grid > :last-child:nth-child(odd) {
+    grid-column: auto;
+    justify-self: stretch;
+    width: 100%;
+    max-width: none;
+    margin: 0;
+  }
+  body.offers-page .pair-grid > article > h3 { font-size: 22px; min-height: 2.4em; margin-bottom: 8px; }
+  body.offers-page .pair-grid > article > p { font-size: 13px; }
+}
+@media (max-width: 639px) {
+  body.offers-page .pair-grid { grid-template-columns: minmax(0, 1fr); gap: 32px; }
+}
+
+/* ==========================================================================
+   LAYOUT + ALIGNMENT FIXES (round 4)
+   ========================================================================== */
+
+/* 1. "Why the love is real" (home) - no empty block under the heading.
+      Heading column and the numbered list are centred against each other, so
+      the left column sits in the middle of the list's height instead of
+      hanging at the top with blank space beneath it. */
+@media (min-width: 901px) {
+  main .reasons { align-items: center; }
+  main .reasons .section-head { align-self: center; }
+}
+
+/* 2. "Share the joy" (home 2) - breathing room under the photo section above.
+      It used to have padding-top:0 and sat flush against the Kind-words
+      photo background. */
+.h3-share { padding-top: clamp(56px, 7vw, 96px); }
+
+/* 3. "Loved by our regulars" - reviewer photos.
+      Image paths live in index-2.html: assets/images/reviews/avatar-*.jpg
+      (square, 240x240 is plenty). If a file is missing, the initials show. */
+.h3-kind .h3-quote footer .h3-avatar {
+  position: relative;
+  flex: none;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  overflow: hidden;
+  display: grid;
+  place-items: center;
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: .04em;
+  border: 2px solid rgba(255, 243, 226, .55);
+}
+.h3-kind .h3-quote footer .h3-avatar::before { content: attr(data-initials); }
+.h3-kind .h3-quote footer .h3-avatar img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* 4. MOBILE ALIGNMENT, whole site.
+      Section headings were centred while the content under them (cards, steps,
+      lists, text) is left-aligned, so edges zig-zagged. On phones every
+      section heading now starts on the same left gutter as the content.
+      Deliberately centred blocks (stat cards, newsletter band, hero of home 2,
+      buttons inside cards) are left alone. */
+@media (max-width: 767px) {
+  .section-head,
+  .h3-head,
+  .xs .section-head {
+    text-align: start;
+    margin-inline: 0;
+    max-width: none;
+    align-items: flex-start;
+  }
+  .section-head p,
+  .h3-head p,
+  .xs .section-head p { margin-inline: 0; text-align: start; max-width: none; }
+  .section-head .eyebrow,
+  .h3-head .eyebrow { text-align: start; }
+
+  :is(.section-head, .h3-head) > :is(.eyebrow, h2, p) { text-align: start; margin-inline: 0; align-self: flex-start; }
+
+  /* contact page intro block */
+  body.contact-page .contact-grid > div:first-child { justify-items: start; text-align: start; }
+  body.contact-page .contact-grid > div:first-child > * { margin-inline: 0; text-align: start; }
+  body.contact-page .xs-split .section-head,
+  body.contact-page .xs-split .section-head > .eyebrow,
+  body.contact-page .xs-split .section-head > h2,
+  body.contact-page .xs-split .section-head > p {
+    align-items: flex-start;
+    align-self: flex-start;
+    text-align: start;
+    margin-inline: 0;
+  }
+  body.contact-page .xs-split .section-head p { width: 100%; }
+
+  /* centred section headings that sit directly above full-width centred
+     cards are kept centred where the cards themselves are centred */
+  .h3-cta, .h3-cta :is(.eyebrow, h2, p, small) { text-align: center; }
+
+  .h3-handle { text-align: start; }
+
+  /* footer: legal line + links line up with the rest of the footer */
+  .footer-bottom { align-items: flex-start; text-align: start; }
+  .footer-bottom > span,
+  .footer-bottom > span:last-child { justify-content: flex-start; text-align: start; }
+
+  /* stacked text + image blocks: always a clear gap between them */
+  .final-cta, .seasonal, .visit { row-gap: 32px; }
+  .final-cta > div { margin-bottom: 32px; }
+  .final-cta > img { margin-inline: 0; }
+}
+
+/* Hero "Made for sharing" avatar stack - photos from assets/images/reviews/
+   (same files as the Kind-words reviewers). Initials show if a file is missing. */
+.proof > span {
+  position: relative;
+  width: 40px;
+  height: 40px;
+  overflow: hidden;
+  flex: none;
+}
+.proof > span::before { content: attr(data-initials); }
+.proof > span img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* MENU page - "A menu full of little joys.": cards go one by one on mobile
+   (was 2 per row, which squeezed names, prices and buttons). */
+@media (max-width: 767px) {
+  .menu-grid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 28px;
+  }
+  .menu-grid .product-card { width: 100%; }
+}
+
+
+/* ==========================================================================
+   BANNER TEXT VISIBILITY FIX
+   Home 1 banner (and other banners with text over a photo): stronger
+   readability layer behind the copy, fully opaque text, higher-contrast
+   accent colour. Layout, images and sizes are untouched.
+   ========================================================================== */
+
+/* 1. Stronger scrim so the photo never fights the text */
+.hero,
+.page-hero,
+.article-hero { --scrim-strong: 97%; --scrim-mid: 92%; --scrim-soft: 66%; }
+.page-hero.dark { --scrim-strong: 90%; --scrim-mid: 82%; --scrim-soft: 52%; }
+
+@media (max-width: 1024px) {
+  .hero,
+  .page-hero,
+  .article-hero { --scrim-mid: 93%; }
+  .page-hero.dark { --scrim-mid: 84%; }
+}
+
+/* 2. Text on the banner: full opacity, no faded paragraph / caption */
+.hero .hero-copy > p,
+.hero .proof p,
+.hero .proof p b,
+.page-hero > div > p,
+.article-hero > div > p { opacity: 1; }
+.hero .eyebrow { opacity: 1; }
+.hero .hero-copy > p,
+.hero .proof p { font-weight: 500; }
+
+/* 3. Accent word ("hand-scooped.") gets enough contrast on each theme */
+html[data-theme="light"] .hero h1 em { color: #B8324F; }
+html[data-theme="dark"]  .hero h1 em { color: #FF8FA3; }
+
+/* 4. Soft halo behind banner text for the busiest parts of the photo */
+html[data-theme="light"] .hero .hero-copy {
+  text-shadow: 0 0 14px rgba(255,243,226,.9), 0 0 3px rgba(255,243,226,.8);
+}
+html[data-theme="dark"] .hero .hero-copy {
+  text-shadow: 0 1px 12px rgba(40,18,14,.85), 0 0 3px rgba(40,18,14,.7);
+}
+.hero .hero-copy .button { text-shadow: none; }
+
+/* 5. Same fix for similar banner text: inner-page heroes + login/register photo */
+html[data-theme="light"] .page-hero:not(.dark):not(.pink) h1 em { color: #B8324F; }
+html[data-theme="dark"]  .page-hero h1 em,
+.page-hero.dark h1 em { color: #FF8FA3; }
+.auth-photo h1,
+.auth-photo h1 em,
+.auth-photo p,
+.auth-photo .eyebrow { text-shadow: 0 2px 14px rgba(40,18,14,.85); }
+.auth-photo h1 em { color: #FF8FA3; }
+.auth-photo img { opacity: .55; }
+
+/* Small screens: an older rule halved the scrim (opacity .55) - keep it solid */
+@media (max-width: 760px) {
+  .hero::after, .page-hero::after, .article-hero::after { opacity: 1; }
+}
+
+
+/* ==========================================================================
+   "Made with care, served with joy." (Home 2 / .h3-bento) - tile text alignment
+   Every text tile: same padding, same left edge, icon circle on the text's left
+   edge, and the text block sitting on the same bottom line. Grid, sizes and
+   images are unchanged.
+   ========================================================================== */
+.h3-tile:not(.stat) { align-items: flex-start; text-align: left; padding: 28px; }
+
+/* icon on top-left, text block pinned to the bottom-left */
+.h3-tile .ic { flex: 0 0 auto; margin: 0 0 auto; }
+.h3-tile > h3 { margin: 0 0 8px; }
+.h3-tile > h3:last-child { margin-bottom: 0; }   /* heading-only tile ("Hand-scooped, always.") sits on the same bottom line */
+.h3-tile > p { margin: 0; max-width: 340px; }
+
+/* plain (light) tile: icon circle was cream-on-cream, so the icon looked loose
+   and off the text edge - give it a visible circle like the other tiles */
+.h3-tile:not(.pink):not(.dark):not(.img):not(.stat) .ic { background: var(--pink); color: #43251F; }
+
+/* even left edge for the icon glyph and its circle */
+.h3-tile .ic svg { flex: 0 0 auto; }
+
+@media (max-width: 760px) {
+  .h3-tile:not(.stat) { padding: 24px; }
+}

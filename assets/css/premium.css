@@ -1,0 +1,2141 @@
+/* ==========================================================================
+   CONE & CO. — PREMIUM LAYER
+   1. Banner background image paths (edit the --banner-image values below)
+   2. Premium motion: curtain, drifting banners, sprinkles, shine, reveals
+   3. Extra content section (.xs) shared by every page
+   Loaded last, after typography-contrast.css.
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1. BANNER BACKGROUND IMAGE PATHS
+   Paths are relative to THIS file (assets/css/). To use your own photo,
+   drop it in assets/images/banners/ and change the url() below.
+   -------------------------------------------------------------------------- */
+:root {
+  --banner-image: url('../images/banners/banner-index.jpg');
+  --banner-opacity: 1;
+  --premium-ease: cubic-bezier(.22, .8, .2, 1);
+}
+
+/* One banner file per page — body gets class page-<filename>. Replace any file to change only that page. */
+body.page-index { --banner-image: url('../images/banners/banner-index.jpg'); }
+body.page-index-2 { --banner-image: url('../images/banners/banner-index-2.jpg'); }
+body.page-coming-soon { --banner-image: url('../images/banners/banner-coming-soon.jpg'); }
+body.page-404 { --banner-image: url('../images/banners/banner-404.jpg'); }
+body.page-login { --banner-image: url('../images/banners/banner-login.jpg'); }
+body.page-register { --banner-image: url('../images/banners/banner-register.jpg'); }
+body.page-menu-details { --banner-image: url('../images/banners/banner-menu-details.jpg'); }
+body.page-about { --banner-image: url('../images/banners/banner-about.jpg'); }
+body.page-contact { --banner-image: url('../images/banners/banner-contact.jpg'); }
+body.page-party-orders { --banner-image: url('../images/banners/banner-party-orders.jpg'); }
+body.page-pricing { --banner-image: url('../images/banners/banner-pricing.jpg'); }
+body.page-menu { --banner-image: url('../images/banners/banner-menu.jpg'); }
+body.page-offers { --banner-image: url('../images/banners/banner-offers.jpg'); }
+body.page-gallery { --banner-image: url('../images/banners/banner-gallery.jpg'); }
+body.page-blog { --banner-image: url('../images/banners/banner-blog.jpg'); }
+body.page-blog-details { --banner-image: url('../images/banners/banner-blog-details.jpg'); }
+
+/* --------------------------------------------------------------------------
+   Banner layers: image + floating sprinkles behind the hero content
+   -------------------------------------------------------------------------- */
+.hero,
+.page-hero,
+.article-hero {
+  position: relative;
+  isolation: isolate;
+}
+
+.hero::before,
+.page-hero::before,
+.article-hero::before,
+.hero::after,
+.page-hero::after,
+.article-hero::after {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  pointer-events: none;
+  inset: -4%;
+}
+
+.hero::before,
+.page-hero::before,
+.article-hero::before {
+  background-image: var(--banner-image);
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+  opacity: var(--banner-opacity);
+  translate: 0 var(--banner-shift, 0px);
+  animation: pxBannerDrift 26s ease-in-out infinite alternate;
+  will-change: transform, translate;
+}
+
+/* Readability scrim: sits between the banner image and the hero text so the
+   copy stays clear on any photo. Colour follows the theme (light / dark).
+   Tune --scrim-strong / --scrim-soft per hero to show more or less photo. */
+.hero,
+.page-hero,
+.article-hero { --scrim: var(--cream); --scrim-strong: 93%; --scrim-mid: 82%; --scrim-soft: 40%; }
+.page-hero.dark { --scrim: var(--choc); --scrim-strong: 84%; --scrim-mid: 72%; --scrim-soft: 38%; }
+
+.hero::after,
+.page-hero::after,
+.article-hero::after {
+  background: linear-gradient(90deg,
+    color-mix(in srgb, var(--scrim) var(--scrim-strong), transparent) 0%,
+    color-mix(in srgb, var(--scrim) var(--scrim-mid), transparent) 48%,
+    color-mix(in srgb, var(--scrim) var(--scrim-soft), transparent) 100%);
+}
+@media (max-width: 1024px) {
+  /* stacked layout: copy spans the full width, so scrim the whole banner evenly */
+  .hero::after,
+  .page-hero::after,
+  .article-hero::after {
+    background: color-mix(in srgb, var(--scrim) var(--scrim-mid), transparent);
+  }
+}
+
+/* Keep real content above the layers */
+.page-hero > img,
+.article-hero > img,
+.hero-visual,
+.hero-copy,
+.article-hero > div { position: relative; z-index: 1; }
+
+@keyframes pxBannerDrift {
+  from { transform: scale(1.04) translate3d(-1.2%, 0, 0); }
+  to   { transform: scale(1.12) translate3d(1.2%, -1.4%, 0); }
+}
+@keyframes pxSprinkleFloat {
+  from { transform: translate3d(0, 10px, 0) rotate(-.6deg); }
+  to   { transform: translate3d(14px, -22px, 0) rotate(.8deg); }
+}
+
+/* --------------------------------------------------------------------------
+   2. PREMIUM MOTION
+   -------------------------------------------------------------------------- */
+
+/* Fix: a transform on <body> turns fixed children (back-to-top, progress bar)
+   into body-relative elements. Fade the page in with opacity only. */
+@keyframes pxPageFade { from { opacity: 0; } to { opacity: 1; } }
+html.has-motion body { animation-name: pxPageFade; animation-duration: .6s; }
+
+/* Brand curtain wipe on every page load */
+html::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 3000;
+  background: var(--pink);
+  transform-origin: top center;
+  pointer-events: none;
+  animation: pxCurtain .95s cubic-bezier(.77, 0, .18, 1) .08s both;
+}
+@keyframes pxCurtain {
+  0%   { transform: scaleY(1); visibility: visible; }
+  99%  { transform: scaleY(0); visibility: visible; }
+  100% { transform: scaleY(0); visibility: hidden; }
+}
+
+/* Glass header once the page scrolls */
+.site-header.scrolled {
+  background: color-mix(in srgb, var(--cream) 86%, transparent);
+  -webkit-backdrop-filter: saturate(160%) blur(14px);
+  backdrop-filter: saturate(160%) blur(14px);
+}
+
+/* Shine sweep + magnetic feel on buttons */
+.button { position: relative; overflow: hidden; isolation: isolate; }
+.button::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(105deg, transparent 35%, rgba(255, 255, 255, .45) 50%, transparent 65%);
+  transform: translateX(-130%);
+  transition: transform .8s var(--premium-ease);
+}
+.button:hover::after { transform: translateX(130%); }
+.button.is-magnetic { transition: transform .25s ease-out, background .25s, color .25s, border-color .25s; }
+
+/* Animated nav underline + footer link slide */
+.nav-link::after { transition: width .35s var(--premium-ease); }
+.footer-grid > div > a:not(.brand) { transition: transform .3s var(--premium-ease), color .2s, opacity .2s; }
+.footer-grid > div > a:not(.brand):hover { transform: translateX(6px); }
+html[dir="rtl"] .footer-grid > div > a:not(.brand):hover { transform: translateX(-6px); }
+
+/* Floating hero details */
+.float-note { animation: pxBob 6s ease-in-out infinite; }
+.stamp, .sticker { animation: pxWobble 7s ease-in-out infinite; }
+@keyframes pxBob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-12px); } }
+@keyframes pxWobble {
+  0%, 100% { transform: rotate(13deg) scale(1); }
+  50%      { transform: rotate(5deg) scale(1.06); }
+}
+.brand-mark { transition: transform .5s var(--premium-ease); }
+.brand:hover .brand-mark { transform: rotate(-12deg) scale(1.08); }
+
+/* Image curtain reveal (class added by premium.js) */
+html.px-ready .px-img {
+  clip-path: inset(0 0 100% 0);
+  transition: clip-path 1.1s var(--premium-ease), opacity .8s ease;
+  opacity: .4;
+}
+html.px-ready .px-img.px-in { clip-path: inset(-60px); opacity: 1; }
+
+/* Premium card hover depth */
+.product-card, .blog-card, .packages article, .category { will-change: transform; }
+.product-card:hover, .packages article:hover { box-shadow: 0 24px 50px rgba(67, 37, 31, .14); }
+
+/* Scroll progress gets a soft glow */
+.m-progress { box-shadow: 0 0 12px rgba(232, 93, 117, .6); }
+
+/* --------------------------------------------------------------------------
+   3. EXTRA CONTENT SECTION (.xs)
+   One 12-column-safe grid system, equal-height cards, 30px/16px gutters.
+   -------------------------------------------------------------------------- */
+.xs { position: relative; }
+.xs.xs-tint { background: color-mix(in srgb, var(--pink) 10%, var(--cream)); }
+.xs.xs-dark { background: var(--choc); color: var(--cream); }
+.xs.xs-dark .section-head p,
+.xs.xs-dark .xs-card p { opacity: .8; }
+
+.xs .section-head { margin-bottom: 56px; }
+.xs-grid {
+  display: grid;
+  gap: 24px;
+  align-items: stretch;
+  max-width: 1280px;
+  margin-inline: auto;
+}
+.xs-cols-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.xs-cols-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+
+/* Cards */
+.xs-card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0;
+  height: 100%;
+  min-width: 0;
+  padding: 34px 28px 32px;
+  border: 1px solid var(--line);
+  background: transparent;
+  position: relative;
+  overflow: hidden;
+  transition: transform .45s var(--premium-ease), box-shadow .45s ease, border-color .3s ease;
+}
+.xs-card::before {
+  content: "";
+  position: absolute;
+  inset-inline: 0;
+  top: 0;
+  height: 3px;
+  background: var(--pink);
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform .55s var(--premium-ease);
+}
+html[dir="rtl"] .xs-card::before { transform-origin: right center; }
+.xs-card:hover { transform: translateY(-6px); border-color: var(--pink); box-shadow: 0 22px 46px rgba(67, 37, 31, .12); }
+.xs-card:hover::before { transform: scaleX(1); }
+.xs-card .xs-icon {
+  width: 56px;
+  height: 56px;
+  flex: none;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--pink);
+  color: #43251F;
+  margin-bottom: 24px;
+  transition: transform .5s var(--premium-ease);
+}
+.xs-card:hover .xs-icon { transform: rotate(-10deg) scale(1.08); }
+.xs-card .xs-icon svg { width: 24px; height: 24px; }
+.xs-card h3 { font: 600 24px/1.2 var(--display); letter-spacing: -.02em; margin: 0 0 10px; }
+.xs-card p { font-size: 13px; line-height: 1.8; opacity: .75; margin: 0; }
+.xs-card .underlink { margin-top: auto; padding-top: 22px; border: 0; }
+.xs-card .underlink span { border-bottom: 1px solid var(--pink); padding-bottom: 5px; }
+a.xs-card { color: inherit; }
+
+/* Stats */
+.xs-stat {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  gap: 8px;
+  height: 100%;
+  padding: 26px 0 0;
+  border-top: 1px solid rgba(255, 243, 226, .3);
+}
+.xs-dark .xs-stat { border-top-color: color-mix(in srgb, var(--cream) 30%, transparent); }
+.xs-stat b {
+  font: 600 clamp(48px, 5.4vw, 78px)/1 var(--display);
+  letter-spacing: -.05em;
+  font-variant-numeric: tabular-nums;
+}
+.xs-stat b em { color: var(--pink); font-style: italic; }
+.xs-stat strong { font-size: 12px; letter-spacing: .14em; text-transform: uppercase; }
+.xs-stat p { font-size: 13px; line-height: 1.7; opacity: .75; margin: 0; max-width: 260px; }
+
+/* Steps with a connecting line */
+.xs-steps { counter-reset: xs; }
+.xs-step {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  height: 100%;
+  min-width: 0;
+  position: relative;
+  padding-top: 8px;
+}
+.xs-step .xs-num {
+  width: 64px;
+  height: 64px;
+  flex: none;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--cream);
+  border: 1px solid var(--pink);
+  font: 600 24px var(--display);
+  color: var(--pink);
+  position: relative;
+  z-index: 1;
+  margin-bottom: 24px;
+  transition: background .35s, color .35s, transform .5s var(--premium-ease);
+}
+.xs-step:hover .xs-num { background: var(--pink); color: #43251F; transform: scale(1.08) rotate(-6deg); }
+.xs-step::before {
+  content: "";
+  position: absolute;
+  top: 40px;
+  inset-inline-start: 64px;
+  inset-inline-end: -24px;
+  height: 1px;
+  background: repeating-linear-gradient(90deg, var(--pink) 0 6px, transparent 6px 12px);
+}
+.xs-step:last-child::before { display: none; }
+.xs-step h3 { font: 600 24px/1.2 var(--display); letter-spacing: -.02em; margin: 0 0 10px; }
+.xs-step p { font-size: 13px; line-height: 1.8; opacity: .75; margin: 0; max-width: 300px; }
+
+/* Timeline */
+.xs-time {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-width: 0;
+  padding-top: 34px;
+  position: relative;
+  border-top: 1px solid var(--line);
+}
+.xs-time::before {
+  content: "";
+  position: absolute;
+  top: -7px;
+  inset-inline-start: 0;
+  width: 13px;
+  height: 13px;
+  border-radius: 50%;
+  background: var(--pink);
+  box-shadow: 0 0 0 6px color-mix(in srgb, var(--pink) 22%, transparent);
+  animation: pxPulse 2.8s ease-in-out infinite;
+}
+@keyframes pxPulse {
+  0%, 100% { box-shadow: 0 0 0 4px color-mix(in srgb, var(--pink) 22%, transparent); }
+  50%      { box-shadow: 0 0 0 11px color-mix(in srgb, var(--pink) 6%, transparent); }
+}
+.xs-time small { font: 600 44px/1 var(--display); color: var(--pink); letter-spacing: -.04em; margin-bottom: 14px; }
+.xs-time h3 { font: 600 22px/1.2 var(--display); margin: 0 0 8px; }
+.xs-time p { font-size: 13px; line-height: 1.8; opacity: .75; margin: 0; }
+
+/* FAQ: heading column + accordion column */
+.xs-split {
+  display: grid;
+  grid-template-columns: minmax(0, .8fr) minmax(0, 1.2fr);
+  gap: 8vw;
+  align-items: start;
+  max-width: 1280px;
+  margin-inline: auto;
+}
+.xs-split .section-head { text-align: start; margin: 0; max-width: none; position: sticky; top: 120px; }
+.xs-split .section-head p { margin-inline: 0; }
+.xs-faq { border-top: 1px solid var(--line); }
+.xs-faq details { border-bottom: 1px solid var(--line); padding: 0; }
+.xs-faq summary {
+  list-style: none;
+  display: grid;
+  grid-template-columns: 1fr 22px;
+  gap: 18px;
+  align-items: center;
+  padding: 24px 0;
+  cursor: pointer;
+  font: 600 22px/1.3 var(--display);
+  letter-spacing: -.015em;
+  transition: color .25s;
+}
+.xs-faq summary::-webkit-details-marker { display: none; }
+.xs-faq summary::after {
+  content: "+";
+  font: 300 28px/1 var(--body);
+  color: var(--pink);
+  justify-self: end;
+  transition: transform .4s var(--premium-ease);
+}
+.xs-faq details[open] summary::after { transform: rotate(135deg); }
+.xs-faq summary:hover { color: var(--pink); }
+.xs-faq details > p {
+  margin: 0;
+  padding: 0 40px 26px 0;
+  font-size: 13px;
+  line-height: 1.9;
+  opacity: .78;
+  animation: pxFaqIn .5s var(--premium-ease) both;
+}
+html[dir="rtl"] .xs-faq details > p { padding: 0 0 26px 40px; }
+@keyframes pxFaqIn { from { opacity: 0; transform: translateY(-8px); } to { opacity: .78; transform: translateY(0); } }
+
+/* Staggered reveal for the new section */
+html.px-ready .xs-reveal {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity .8s var(--premium-ease), transform .8s var(--premium-ease);
+  transition-delay: calc(var(--px-i, 0) * 90ms);
+}
+html.px-ready .xs-reveal.px-in { opacity: 1; transform: translateY(0); }
+
+/* --------------------------------------------------------------------------
+   Responsive — same breakpoints as responsive.css
+   -------------------------------------------------------------------------- */
+@media (max-width: 1100px) {
+  .xs-cols-4 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .xs-cols-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; }
+  .xs-step::before { display: none; }
+}
+@media (max-width: 900px) {
+  .xs-split { grid-template-columns: minmax(0, 1fr); gap: 40px; }
+  .xs-split .section-head { position: static; }
+  .xs-cols-3 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 767px) {
+  .xs .section-head { margin-bottom: 36px; }
+  .xs-grid { gap: 14px; }
+  .xs-cols-3, .xs-cols-4 { grid-template-columns: minmax(0, 1fr); }
+  .xs-card { padding: 26px 22px; }
+  .xs-card h3, .xs-step h3 { font-size: 22px; }
+  .xs-faq summary { font-size: 19px; padding: 20px 0; }
+  .xs-faq details > p { padding-inline-end: 0; }
+  .xs-step { flex-direction: row; flex-wrap: wrap; column-gap: 18px; align-items: flex-start; }
+  .xs-step .xs-num { width: 52px; height: 52px; font-size: 20px; margin-bottom: 0; }
+  .xs-step > div { flex: 1; min-width: 0; }
+  .hero::after, .page-hero::after, .article-hero::after { background-size: 420px auto; opacity: .55; }
+  .float-note { animation: none; }
+}
+@media (hover: none) {
+  .xs-card:hover { transform: none; box-shadow: none; }
+}
+
+/* --------------------------------------------------------------------------
+   Reduced motion: keep the static banner, drop everything that moves
+   -------------------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  html::after { display: none !important; }
+  .hero::before, .page-hero::before, .article-hero::before,
+  .hero::after, .page-hero::after, .article-hero::after,
+  .float-note, .stamp, .sticker, .xs-time::before { animation: none !important; }
+  html.px-ready .px-img,
+  html.px-ready .xs-reveal { clip-path: none !important; opacity: 1 !important; transform: none !important; transition: none !important; }
+  .button::after { display: none; }
+  .xs-faq details > p { animation: none; }
+}
+
+/* Clip the oversized banner layers on every hero type */
+.article-hero { overflow: hidden; }
+
+/* ==========================================================================
+   TABLET + MOBILE ALIGNMENT FIXES
+   Desktop indents (vw-based padding-left) were leaking into stacked layouts and
+   pushing text off the page gutter. Everything below snaps content back to the
+   shared --pad axis so headings, copy, buttons and images share one left edge.
+   ========================================================================== */
+@media (max-width: 1024px) {
+  .page-hero > div,
+  .article-hero > div,
+  .values > div:first-child,
+  .seasonal > div,
+  .visit > div,
+  .final-cta > div,
+  .home2-copy,
+  .coming-page > div,
+  .split > div { padding-inline: 0; }
+
+  .page-hero,
+  .article-hero,
+  .values,
+  .final-cta,
+  .seasonal,
+  .testimonials { padding-inline: var(--pad); }
+
+  /* Section heads that are meant to be left-aligned must also left-align flex children */
+  .reasons .section-head,
+  .xs-split .section-head { align-items: flex-start; text-align: start; margin-inline: 0; }
+  .reasons .section-head p,
+  .xs-split .section-head p { margin-inline: 0; }
+
+  /* Hero artwork shares the text's left/right edges */
+  .hero-visual > img { width: 100%; margin-inline: 0; }
+
+  /* Stacked CTA band: copy first, artwork below on the same axis */
+  .final-cta { flex-direction: column; align-items: flex-start; }
+  .final-cta > img { width: 100%; max-width: 420px; height: 300px; transform: none; margin-inline: 0; }
+}
+
+@media (max-width: 639px) {
+  .page-hero { min-height: 0; padding-block: 48px; gap: 28px; }
+  .page-hero > div > p,
+  .hero-copy > p { max-width: 100%; }
+  .page-hero h1,
+  .article-hero h1 { overflow-wrap: break-word; }
+  .final-cta > img { max-width: 100%; height: 260px; }
+
+  /* Product cards: shorter photo so one-column lists scan quickly */
+  .product-photo { aspect-ratio: 1 / .78; }
+
+  /* Auth forms on the page gutter */
+  .auth-box { padding-inline: var(--pad); }
+
+  /* Stats: tidy 2 x 2 grid */
+  .xs-stats-grid,
+  .xs-dark .xs-cols-4 { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 28px 16px; }
+  .xs-stat b { font-size: clamp(38px, 12vw, 52px); }
+  .xs-stat strong { font-size: 10px; letter-spacing: .1em; }
+  .xs-stat p { font-size: 12px; }
+
+  /* FAQ + cards read as one column with the same left edge */
+  .xs-split .section-head { margin-bottom: 0; }
+}
+
+@media (min-width: 640px) and (max-width: 1024px) {
+  .xs-cols-4 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+/* Tablet: orphan cards sit on the grid's left edge instead of floating centred,
+   and the 3-card home product row uses all three columns. */
+@media (min-width: 640px) and (max-width: 1024px) {
+  .products > :last-child:nth-child(odd),
+  .menu-grid > :last-child:nth-child(odd),
+  .blog-grid > :last-child:nth-child(odd),
+  .packages > :last-child:nth-child(odd),
+  .party-packages > :last-child:nth-child(odd),
+  .pair-grid > :last-child:nth-child(odd),
+  .quote-grid > :last-child:nth-child(odd) {
+    grid-column: auto;
+    justify-self: stretch;
+    width: 100%;
+    max-width: none;
+    margin-inline: 0;
+  }
+  .products { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; }
+  .product-info { flex-direction: column; gap: 4px; }
+}
+
+/* Mobile: 3-item image grids become one clean column (no centred orphan) */
+@media (max-width: 639px) {
+  .pair-grid,
+  .collection-items { grid-template-columns: minmax(0, 1fr); gap: 28px; }
+  .pair-grid img,
+  .pairings .pair-grid img,
+  .collection-items a img { height: clamp(200px, 56vw, 260px); }
+  .pair-grid > :last-child:nth-child(odd) { max-width: none; width: 100%; justify-self: stretch; }
+  .xs-time-grid, .xs-cols-4:has(.xs-time) { gap: 40px; }
+}
+
+/* Menu closing band: light mode had chocolate ink on a chocolate panel (text invisible).
+   Use the pink panel the contrast rules were written for, and stack it cleanly on small screens. */
+html[data-theme="light"] .menu-end { background: var(--pink); }
+html[data-theme="light"] .menu-end em { color: var(--cream); }
+.menu-end { align-items: center; }
+@media (max-width: 767px) {
+  .menu-end { flex-direction: column; align-items: flex-start; gap: 18px; padding: 48px var(--pad); }
+  .menu-end p { font-size: clamp(32px, 9vw, 44px); }
+}
+
+/* Pink panels: italic accent words must not be pink-on-pink */
+.party-packages .section-head h2 em,
+.collection h2 em,
+.values h2 em,
+.final-cta h2 em { color: var(--cream); }
+html[data-theme="light"] .party-packages .section-head h2 em { color: #FFF3E2; }
+
+/* Checkbox rows: box and label share one baseline (the generic .form label grid stacked them) */
+.form label:has(> input[type="checkbox"]),
+.auth-options label {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 10px;
+  font-weight: 600;
+}
+.form input[type="checkbox"] { width: 18px; height: 18px; flex: none; margin: 0; accent-color: var(--pink); }
+.auth-options { gap: 14px; flex-wrap: wrap; }
+
+/* <body class="error-page"> and <body class="coming-page"> share their names with the page
+   sections, so the section's padding/grid/min-height was being applied to the whole page
+   (header and footer indented, layout squeezed). Reset the body, keep the section styling. */
+body.error-page,
+body.coming-page {
+  display: block;
+  padding: 0;
+  min-height: 0;
+  gap: 0;
+  grid-template-columns: none;
+  grid-template-rows: none;
+}
+body.coming-page > div { padding-inline: 0; align-self: auto; }
+body.coming-page > .announcement { padding-inline: var(--pad); }
+
+/* Tablet: 3-item image rows use all three columns; timeline rows get breathing room */
+@media (min-width: 640px) and (max-width: 1024px) {
+  .pair-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; }
+  .pair-grid img, .pairings .pair-grid img { height: 190px; }
+  .xs-cols-4:has(.xs-time) { row-gap: 44px; }
+}
+@media (max-width: 639px) {
+  .xs-cols-4:has(.xs-time) { row-gap: 40px; }
+}
+
+/* ==========================================================================
+   PRODUCT CARDS ("A few reasons to make room", menu grid)
+   Title + price share one row, description sits directly beneath, and the
+   "discover" link is pinned to the card bottom so every card lines up
+   across desktop, tablet and mobile.
+   ========================================================================== */
+.product-card { display: flex; flex-direction: column; height: 100%; }
+.product-card .product-info {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-areas: "title price" "desc desc";
+  column-gap: 14px;
+  row-gap: 8px;
+  align-items: start;
+  align-content: start;
+  flex-direction: unset;
+  padding: 18px 0 0;
+}
+.product-card .product-info > div { display: contents; }
+.product-card .product-info h3 { grid-area: title; margin: 0; font-size: 23px; line-height: 1.2; min-height: 0; }
+.product-card .product-info p { grid-area: desc; margin: 0; font-size: 12px; line-height: 1.6; min-height: 0; }
+.product-card .product-info > strong { grid-area: price; padding-top: 4px; font-size: 13px; text-align: end; }
+.product-card .underlink { margin-top: auto; align-self: flex-start; padding-top: 0; }
+.product-card .product-info { flex: 1 1 auto; padding-bottom: 16px; }
+
+@media (min-width: 640px) and (max-width: 1024px) {
+  .product-card .product-info { grid-template-areas: "title title" "desc desc" "price price"; row-gap: 6px; }
+  .product-card .product-info h3 { font-size: 20px; min-height: 2.4em; }
+  .product-card .product-info > strong { padding-top: 6px; text-align: start; }
+  .product-card .product-info p { min-height: 3.2em; }
+}
+@media (max-width: 639px) {
+  .product-card .product-info h3 { font-size: 22px; }
+}
+
+/* ==========================================================================
+   CARD TEXT INSET — text inside a framed card never touches the card edge.
+   Photos stay full-bleed; the copy block gets an even inner gutter.
+   ========================================================================== */
+:root { --card-gutter: 22px; }
+.product-card,
+.blog-card {
+  border: 1px solid var(--line);
+  background: color-mix(in srgb, var(--choc) 3%, transparent);
+  overflow: hidden;
+}
+.product-card .product-info {
+  padding: 20px var(--card-gutter) 14px;
+  column-gap: 16px;
+}
+.product-card .underlink {
+  margin: 0 var(--card-gutter) var(--card-gutter);
+  align-self: flex-start;
+}
+.menu-grid .product-card .product-info { padding-inline: var(--card-gutter); }
+.blog-card > div { padding: 20px var(--card-gutter) var(--card-gutter); }
+.blog-card .underlink { margin-top: auto; }
+@media (max-width: 639px) {
+  :root { --card-gutter: 18px; }
+  .menu-grid .product-card .product-info { padding-inline: var(--card-gutter); }
+}
+
+/* ==========================================================================
+   "WHY THE LOVE IS REAL" — two clean columns, perfectly aligned.
+   Left: eyebrow + heading, vertically centred against the list.
+   Right: numbered rows on one shared grid (number | copy | arrow).
+   ========================================================================== */
+.reasons {
+  grid-template-columns: minmax(0, .85fr) minmax(0, 1.15fr);
+  column-gap: clamp(40px, 7vw, 110px);
+  align-items: center;
+  max-width: 1280px;
+  margin-inline: auto;
+}
+.reasons .section-head {
+  max-width: none;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  text-align: start;
+}
+.reasons .section-head .eyebrow { margin: 0 0 18px; }
+.reasons .section-head h2 { margin: 0; }
+.reasons > div:last-child { width: 100%; }
+.reasons article {
+  display: grid;
+  grid-template-columns: 48px minmax(0, 1fr) 20px;
+  column-gap: 20px;
+  align-items: center;
+  padding: 26px 0;
+}
+.reasons article > b { font-size: 12px; line-height: 1; letter-spacing: .08em; align-self: center; }
+.reasons article h3 { margin: 0 0 6px; line-height: 1.2; }
+.reasons article p { margin: 0; line-height: 1.6; max-width: 46ch; }
+.reasons article i,
+.reasons article svg { width: 18px; height: 18px; justify-self: end; align-self: center; }
+
+@media (max-width: 900px) {
+  .reasons { grid-template-columns: minmax(0, 1fr); row-gap: 28px; align-items: start; }
+  .reasons article { grid-template-columns: 34px minmax(0, 1fr) 18px; column-gap: 14px; padding: 20px 0; }
+}
+
+/* Reasons — refinement: number + arrow lock to the title line; no mid-sentence wraps */
+.reasons { grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr); }
+.reasons .section-head h2 { font-size: clamp(36px, 4.2vw, 58px); text-wrap: balance; }
+.reasons article { align-items: start; }
+.reasons article > b,
+.reasons article > i,
+.reasons article > svg { height: 1.2em; display: flex; align-items: center; }
+.reasons article > b { font-size: 12px; height: 29px; }
+.reasons article > i, .reasons article > svg { height: 29px; justify-self: end; }
+.reasons article p { max-width: none; }
+@media (max-width: 900px) {
+  .reasons article > b, .reasons article > i, .reasons article > svg { height: 24px; }
+}
+.reasons article > b,
+.reasons article > i,
+.reasons article > svg { align-self: start; }
+@media (max-width: 900px) {
+  .reasons { grid-template-columns: minmax(0, 1fr); row-gap: 28px; align-items: start; }
+  .reasons .section-head h2 { font-size: clamp(34px, 9vw, 48px); }
+}
+
+/* ==========================================================================
+   FULL-WIDTH SPLIT SECTIONS — one shared system
+   "A SCOOP WITH A STORY" (.split), "HERE FOR A GOOD TIME" (.seasonal),
+   "WHY THE LOVE IS REAL" (.reasons), "YOUR NEXT GOOD IDEA" (.final-cta),
+   plus the same two-column pattern in .visit, .testimonials, .values,
+   .intro-grid, .contact-grid, .article-hero, .coming-page and .page-hero.
+   Rules: edge-to-edge band, content sits exactly on the site gutter
+   (--pad) on both sides, two equal columns, copy centred against media.
+   ========================================================================== */
+.split,
+.seasonal,
+.reasons,
+.final-cta,
+.visit,
+.testimonials,
+.values,
+.intro-grid,
+.contact-grid,
+.article-hero,
+.coming-page,
+.page-hero {
+  width: 100%;
+  max-width: none;
+  margin-inline: 0;
+  padding-inline: var(--pad);
+}
+
+/* copy blocks start flush on the gutter — no extra vw indents */
+.split > div,
+.seasonal > div,
+.final-cta > div,
+.visit > div,
+.values > div:first-child,
+.article-hero > div,
+.coming-page > div,
+.page-hero > div { padding-left: 0; padding-right: 0; }
+.split > div:last-child { max-width: none; }
+
+.seasonal p,
+.final-cta p,
+.split p,
+.visit p,
+.intro-grid p { max-width: 52ch; }
+
+@media (min-width: 1025px) {
+  .split,
+  .seasonal,
+  .reasons,
+  .final-cta,
+  .visit,
+  .testimonials,
+  .values,
+  .intro-grid,
+  .contact-grid,
+  .article-hero,
+  .coming-page,
+  .page-hero {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    column-gap: clamp(40px, 6vw, 110px);
+    align-items: center;
+  }
+  .reasons { max-width: none; margin-inline: 0; }
+  .coming-page { grid-template-rows: auto 1fr; }
+  .coming-page > .brand { grid-column: 1 / -1; }
+
+  /* media fills its column exactly, same edges as the copy opposite */
+  .split-image { height: clamp(420px, 40vw, 600px); width: 100%; }
+  .seasonal > img,
+  .final-cta > img,
+  .visit > img,
+  .article-hero > img,
+  .page-hero > img {
+    width: 100%;
+    max-width: none;
+    margin: 0;
+    transform: none;
+  }
+  .seasonal > img { height: clamp(380px, 36vw, 520px); }
+  .final-cta > img { height: clamp(340px, 30vw, 440px); }
+  .visit > img { height: clamp(360px, 32vw, 480px); }
+
+  /* floating stickers sit inside the right gutter instead of the edge */
+  .seasonal .sticker { right: calc(var(--pad) + 18px); top: 14%; }
+}
+
+@media (max-width: 1024px) {
+  .reasons { grid-template-columns: minmax(0, 1fr); row-gap: 28px; align-items: start; }
+  .final-cta > img, .seasonal > img { transform: none; width: 100%; max-width: 100%; }
+}
+
+/* ==========================================================================
+   HEADER DROPDOWN — Home ▾  (Home 1 / Home 2)
+   ========================================================================== */
+.nav-dropdown { position: relative; display: inline-flex; align-items: center; }
+.nav-dropdown-toggle {
+  appearance: none; background: none; border: 0; margin: 0; padding: 10px 0;
+  color: inherit; font-family: inherit; cursor: pointer;
+  align-items: center; gap: 7px;
+}
+.dd-caret {
+  width: 6px; height: 6px; flex: 0 0 auto;
+  border-inline-end: 1.6px solid currentColor; border-bottom: 1.6px solid currentColor;
+  transform: translateY(-2px) rotate(45deg); transition: transform .25s var(--ease, ease);
+}
+.nav-dropdown.open .dd-caret { transform: translateY(1px) rotate(-135deg); }
+
+.dropdown-menu {
+  display: flex; flex-direction: column; gap: 2px;
+  background: var(--cream); color: var(--choc);
+  border: 1px solid var(--line); padding: 8px;
+  box-shadow: 0 18px 40px rgba(67, 37, 31, .14);
+}
+.dropdown-menu a {
+  display: flex; align-items: center; justify-content: space-between; gap: 18px;
+  padding: 12px 14px; white-space: nowrap;
+  font-size: var(--type-nav, 15px); font-weight: 600; line-height: 1.3; letter-spacing: .015em;
+  transition: background .2s, color .2s;
+}
+.dropdown-menu a:hover, .dropdown-menu a:focus-visible { background: rgba(232, 93, 117, .14); color: var(--pink); outline: 0; }
+.dropdown-menu a.active { color: var(--pink); }
+.dropdown-menu a.active::after { content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--pink); flex: 0 0 auto; }
+
+/* Desktop: floating panel, aligned to the trigger's start edge */
+.desktop-nav .dropdown-menu {
+  position: absolute; top: 100%; inset-inline-start: -14px; min-width: 190px; z-index: 130;
+  opacity: 0; visibility: hidden; transform: translateY(8px);
+  transition: opacity .22s, transform .22s var(--ease, ease), visibility .22s;
+}
+.desktop-nav .nav-dropdown.open .dropdown-menu,
+.desktop-nav .nav-dropdown:focus-within .dropdown-menu { opacity: 1; visibility: visible; transform: none; }
+@media (hover: hover) {
+  .desktop-nav .nav-dropdown:hover .dropdown-menu { opacity: 1; visibility: visible; transform: none; }
+  .desktop-nav .nav-dropdown:hover .dd-caret { transform: translateY(1px) rotate(-135deg); }
+}
+
+/* Mobile / tablet: inline accordion inside the slide-down menu */
+.mobile-nav .nav-dropdown { display: block; width: 100%; }
+.mobile-nav .nav-dropdown-toggle { width: 100%; justify-content: space-between; text-align: start; }
+.mobile-nav .dropdown-menu {
+  display: none; border: 0; box-shadow: none; background: transparent;
+  padding: 0 0 6px; margin: 0; border-bottom: 1px solid var(--line);
+}
+.mobile-nav .nav-dropdown.open .dropdown-menu { display: flex; }
+.mobile-nav .dropdown-menu a { padding: 12px 0 12px 18px; min-height: 44px; font-size: 16px; }
+html[dir="rtl"] .mobile-nav .dropdown-menu a { padding: 12px 18px 12px 0; }
+
+/* ==========================================================================
+   FOOTER — content sits on the same gutter as every section; columns share
+   one top line; identical on every page.
+   ========================================================================== */
+.footer { padding: 72px var(--pad) 24px; }
+.footer-grid {
+  grid-template-columns: minmax(0, 1.35fr) minmax(0, .8fr) minmax(0, .9fr) minmax(0, 1.35fr);
+  column-gap: clamp(32px, 5vw, 80px);
+  padding: 0 0 56px;
+  align-items: start;
+}
+.footer-bottom { padding: 20px 0 0; }
+.footer-grid > div:not(:first-child) > :first-child { margin-top: 10px; }
+.footer-grid h4,
+.footer-grid .eyebrow {
+  display: block; margin: 0 0 20px; font-size: 12px; line-height: 1.4;
+  letter-spacing: .14em; font-weight: 800; text-transform: uppercase;
+}
+.footer-grid > div:not(:first-child) > .eyebrow { margin-bottom: 14px; }
+.footer-grid p { margin: 18px 0 0; max-width: 34ch; }
+.footer-grid h3 { margin: 0 0 18px; }
+.footer-grid > div > a:not(.brand) { margin: 0 0 12px; }
+.footer-grid > div > h4 + a { margin-top: 0; }
+.footer .newsletter { max-width: 100%; }
+@media (max-width: 1024px) {
+  .footer-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 36px 32px; padding-bottom: 40px; }
+  .footer-grid > div:not(:first-child) > :first-child { margin-top: 0; }
+}
+@media (max-width: 639px) {
+  .footer { padding: 48px 16px 26px; }
+  .footer-grid { grid-template-columns: minmax(0, 1fr); gap: 28px; }
+}
+
+/* ==========================================================================
+   DARK MODE — closing CTA must not melt into the section above it.
+   Brand pink band with chocolate ink (same pairing as light mode).
+   ========================================================================== */
+html[data-theme="dark"] .final-cta { background: #E85D75 !important; color: #43251F !important; }
+html[data-theme="dark"] .final-cta :is(h1, h2, h3, p, span, small, .eyebrow),
+html[data-theme="dark"] .final-cta h2 em { color: #43251F !important; }
+html[data-theme="dark"] .final-cta .button.primary { background: #43251F; border-color: #43251F; color: #FFF3E2; }
+html[data-theme="dark"] .final-cta .button.primary:hover { background: #FFF3E2; border-color: #FFF3E2; color: #43251F; }
+html[data-theme="dark"] .final-cta .button.primary :is(svg, i) { color: inherit; }
+.mobile-nav .nav-dropdown-toggle::after { display: none; }
+.footer .newsletter { display: flex; width: 100%; max-width: 420px; }
+.footer-grid small[data-form-status] { display: block; margin-top: 12px; }
+
+/* ==========================================================================
+   TESTIMONIALS — "THE SCOOP FROM YOU": reviewer avatar + tablet alignment
+   ========================================================================== */
+.review-author { display: flex; align-items: center; gap: 16px; }
+.review-avatar {
+  width: 56px; height: 56px; flex: 0 0 56px; border-radius: 50%;
+  object-fit: cover; border: 2px solid currentColor; background: var(--cream);
+}
+.review strong { font-size: 15px !important; line-height: 1.3; }
+.review strong small { font-size: 13px !important; margin-top: 2px; opacity: .8; }
+
+@media (max-width: 1024px) {
+  .testimonials { row-gap: 32px; align-items: start; }
+  .testimonials > div:first-child p { max-width: 52ch; }
+  .review-slider { min-height: 0; display: block; }
+  .review { max-width: 640px; }
+  .review blockquote { font-size: clamp(24px, 3.6vw, 32px); margin: 16px 0 24px; }
+  /* controls drop into the flow, left-aligned with the copy */
+  .review-controls { position: static; margin-top: 32px; justify-content: flex-start; gap: 14px; }
+  .review-controls button { width: 44px; height: 44px; }
+  .review-controls span { font-size: 12px; min-width: 56px; text-align: center; }
+}
+@media (max-width: 639px) {
+  .review-avatar { width: 48px; height: 48px; flex-basis: 48px; }
+  .review-author { gap: 12px; }
+}
+
+/* ==========================================================================
+   TABLET HEADER / MENU BAR (768–1024px)
+   Header: brand | CTA + theme + RTL + menu button, every control 42px high on
+   one centre line, edges on the 30px gutter. Panel: two tidy columns, Home
+   dropdown spans the row, CTA only lives in the header.
+   ========================================================================== */
+@media (min-width: 768px) and (max-width: 1024px) {
+  .header-inner { height: 84px; padding-inline: var(--pad); gap: 16px; }
+  .header-actions { gap: 10px; align-items: center; }
+  .header-actions .header-cta {
+    display: inline-flex !important; align-items: center; justify-content: center;
+    min-height: 42px; height: 42px; padding: 0 18px; gap: 10px; white-space: nowrap;
+  }
+  .header-actions .icon-btn,
+  .header-actions .mobile-toggle { width: 42px; height: 42px; flex: 0 0 42px; }
+
+  .mobile-nav {
+    display: grid; grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: 48px; row-gap: 0; align-items: start;
+    padding: 12px var(--pad) 28px;
+    max-height: calc(100vh - 120px); overflow-y: auto;
+  }
+  .mobile-nav[hidden] { display: none !important; }
+  .mobile-nav .nav-link { min-height: 56px; padding: 0; font-size: 17px !important; border-bottom: 1px solid var(--line); }
+  .mobile-nav .nav-link.active:not(.nav-dropdown-toggle) { color: var(--pink); }
+  .mobile-nav .nav-dropdown { grid-column: 1 / -1; border: 0; }
+  .mobile-nav .nav-dropdown-toggle { min-height: 56px; }
+  .mobile-nav .dropdown-menu { flex-direction: row; gap: 12px; padding: 12px 0 14px; border-bottom: 1px solid var(--line); }
+  .mobile-nav .nav-dropdown.open .dropdown-menu { display: flex; }
+  .mobile-nav .dropdown-menu a {
+    flex: 1 1 0; justify-content: space-between; padding: 14px 18px; min-height: 52px;
+    border: 1px solid var(--line); font-size: 16px;
+  }
+  .mobile-nav .dropdown-menu a.active { border-color: var(--pink); }
+  html[dir="rtl"] .mobile-nav .dropdown-menu a { padding: 14px 18px; }
+  .mobile-nav > .button { display: none; }
+}
+
+/* ==========================================================================
+   "THE SCOOP FROM YOU" — arrow buttons centred
+   A shared rule in components.css turns every button that contains an icon into
+   inline-flex without horizontal centring, so the arrow hugged the left edge of
+   its square. Centre the icon on both axes, on every screen size.
+   ========================================================================== */
+.review-controls button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  line-height: 0;
+}
+.review-controls button > svg,
+.review-controls button > i {
+  display: block;
+  margin: 0;
+  flex: 0 0 auto;
+}
+
+/* ==========================================================================
+   TABLET SPACING (640–1024px)
+   Stacked sections were carrying desktop-sized padding, gaps and artwork heights,
+   so every band felt loose. Tighter, consistent rhythm for tablet only —
+   desktop (1025px+) and mobile (<640px) are untouched.
+   ========================================================================== */
+@media (min-width: 640px) and (max-width: 1024px) {
+  /* section rhythm */
+  .section { padding-block: 48px; }
+  .section-head { margin-bottom: 28px; }
+  .seasonal,
+  .final-cta { padding-block: 48px; }
+
+  /* stacked two-column bands: smaller gap between copy and artwork */
+  .split,
+  .seasonal,
+  .visit,
+  .testimonials,
+  .reasons,
+  .values,
+  .intro-grid,
+  .contact-grid { gap: 24px; row-gap: 24px; }
+  .final-cta { gap: 24px; }
+
+  /* hero */
+  .hero { padding-block: 44px 24px; gap: 24px; }
+  .hero-visual { height: clamp(300px, 40vw, 380px); }
+
+  /* artwork heights */
+  .split-image { height: clamp(260px, 38vw, 340px); }
+  .seasonal > img { height: clamp(240px, 34vw, 300px); }
+  .visit > img { height: clamp(240px, 32vw, 290px); }
+  .final-cta > img { height: 240px; }
+  .category { min-height: 0; height: 240px; }
+
+  /* testimonials: tighter copy block, arrows centred under the review */
+  .testimonials { row-gap: 24px; }
+  .review-controls { margin-top: 24px; justify-content: center; }
+
+  /* footer */
+  .footer { padding-top: 48px; }
+}
+
+/* ==========================================================================
+   HOME DROPDOWN inside the tablet / mobile menu panel
+   Same rows, same edges, same centre lines as every other menu link:
+   - caret (toggle) and active dot (Home 1) share one vertical axis
+   - Home 1 / Home 2 sit on the same columns as the links below (tablet)
+   - toggle row has the same height and text baseline as the other links
+   Desktop dropdown is unchanged.
+   ========================================================================== */
+.mobile-nav .nav-dropdown-toggle {
+  display: flex; align-items: center; justify-content: space-between;
+  width: 100%; padding-block: 0; padding-inline: 0; line-height: 1.3; text-align: start;
+}
+.mobile-nav .dd-caret { margin-inline-end: 5px; transform: translateY(-2px) rotate(45deg); }
+.mobile-nav .nav-dropdown.open .dd-caret { transform: translateY(2px) rotate(-135deg); }
+.mobile-nav .dropdown-menu a {
+  display: flex; align-items: center; justify-content: space-between;
+  line-height: 1.3;
+}
+.mobile-nav .dropdown-menu a.active::after { margin-inline-end: 4px; }
+
+/* Mobile (<768px): single column list, sub-items indented one clear step */
+@media (max-width: 767px) {
+  .mobile-nav .dropdown-menu { padding: 0 0 6px; }
+  .mobile-nav .dropdown-menu a {
+    min-height: 46px; padding-block: 0; padding-inline: 18px 0; font-size: 16px;
+  }
+  html[dir="rtl"] .mobile-nav .dropdown-menu a { padding-inline: 18px 0; }
+}
+
+/* Tablet (768–1024px): one vertical list, same as mobile but with tablet-sized rows */
+@media (min-width: 768px) and (max-width: 1024px) {
+  .mobile-nav { grid-template-columns: minmax(0, 1fr); column-gap: 0; }
+  .mobile-nav .nav-link,
+  .mobile-nav .nav-dropdown-toggle { min-height: 56px; }
+  .mobile-nav .nav-dropdown.open .dropdown-menu {
+    display: flex; flex-direction: column; gap: 0; padding: 0 0 6px;
+  }
+  .mobile-nav .dropdown-menu a {
+    width: 100%; min-height: 52px; padding: 0 0 0 18px; border: 0;
+    box-sizing: border-box; font-size: 17px;
+  }
+  .mobile-nav .dropdown-menu a.active { border: 0; }
+  html[dir="rtl"] .mobile-nav .dropdown-menu a { padding: 0 18px 0 0; }
+}
+
+
+/* ==========================================================================
+   FINAL FIX LAYER (loaded last — keep at the end of premium.css)
+   Horizontal padding, overflow, icon/text baseline pairing, card-grid
+   stretching and theme-safe hover/focus contrast.
+   ========================================================================== */
+:root { --pad: 30px; }
+@media (max-width: 639px) { :root { --pad: 16px; } }
+html, body { max-width: 100%; overflow-x: clip; }
+img, svg, video { max-width: 100%; }
+:where(.header-inner, .hero, .section, .page-hero, .footer-grid, .footer-bottom, .announcement) > * { min-width: 0; }
+
+/* Icon + text pairs share one baseline */
+.nav-link, .nav-dropdown-toggle, .button, .underlink, .header-cta, .announcement a,
+.detail-tag, .h3-pill, .product-photo b, .social a, .icon-btn, .footer-bottom a {
+  display: inline-flex; align-items: center; gap: 8px;
+}
+.icon-btn, .social a { justify-content: center; }
+.dropdown-menu a, .mobile-nav .nav-link, .mobile-nav .button { display: flex; align-items: center; gap: 8px; }
+.footer-grid > div > a:not(.brand) { display: flex; width: fit-content; align-items: center; gap: 8px; }
+.button i, .underlink i, .nav-link i, .icon-btn i, .social a i { flex: none; line-height: 1; }
+
+/* Card grids: equal-height cards, CTAs pinned to the bottom */
+.products, .menu-grid, .blog-grid, .packages, .categories, .reasons, .pair-grid, .xs-grid, .h3-bento { align-items: stretch; }
+.products > *, .menu-grid > *, .blog-grid > *, .packages > *, .categories > *, .reasons > *, .xs-grid > * { min-width: 0; }
+.product-card, .blog-card, .packages > article, .xs-grid > .xs-card {
+  display: flex; flex-direction: column; height: 100%;
+}
+.product-card .product-info, .blog-card > div:last-child { flex: 1 1 auto; }
+.product-card > .underlink, .product-card > .button,
+.blog-card > .underlink, .blog-card > a.underlink, .blog-card .underlink:last-child,
+.packages > article > .button, .packages > article > .underlink,
+.xs-card > .button, .xs-card > .underlink { margin-top: auto; }
+
+/* Hover / focus contrast — text always follows the theme pair, never white-on-white */
+:root { --pink-ink: #B3304D; }
+html[data-theme="dark"] { --pink-ink: #FF9DB0; }
+.nav-link:hover, .nav-link:focus-visible, .nav-link.active, .dropdown-menu a:hover,
+.dropdown-menu a:focus-visible, .dropdown-menu a.active { color: var(--pink-ink); }
+.dropdown-menu { background: var(--cream); color: var(--choc); border-color: var(--line); }
+.dropdown-menu a { color: var(--choc); }
+.dropdown-menu a:hover, .dropdown-menu a:focus-visible, .dropdown-menu a.active { background: rgba(232, 93, 117, .14); color: var(--pink-ink); }
+.button.primary, .button.primary:hover, .button.primary:focus-visible { color: #fff; }
+.button.outline { color: var(--choc); border-color: var(--choc); }
+.button.outline:hover, .button.outline:focus-visible { background: var(--choc); color: var(--cream); }
+html[data-theme="dark"] .button.outline { color: var(--choc); border-color: var(--choc); }
+html[data-theme="dark"] .button.outline:hover, html[data-theme="dark"] .button.outline:focus-visible { background: var(--choc); color: var(--cream); }
+html[data-theme="dark"] .site-header, html[data-theme="dark"] .site-header.scrolled, html[data-theme="dark"] .mobile-nav { background: var(--cream); color: var(--choc); }
+html[data-theme="dark"] .dropdown-menu { background: #4f2e27; color: var(--choc); box-shadow: 0 14px 32px rgba(0, 0, 0, .35); }
+html[data-theme="dark"] .form input, html[data-theme="dark"] .form textarea, html[data-theme="dark"] .form select,
+html[data-theme="dark"] .search input { color: var(--choc); background: transparent; }
+html[data-theme="dark"] .form input::placeholder, html[data-theme="dark"] .form textarea::placeholder,
+html[data-theme="dark"] .search input::placeholder { color: rgba(255, 243, 226, .62); }
+html[data-theme="dark"] .form select option { background: #43251F; color: #FFF3E2; }
+html[data-theme="dark"] .newsletter input, html[data-theme="dark"] .newsletter input::placeholder { color: var(--cream); }
+.form input:focus, .form textarea:focus, .form select:focus, .search input:focus { outline: 2px solid var(--pink); outline-offset: 2px; }
+/* footer is inverted vs. the page: dark panel in light mode, cream panel in dark mode */
+.footer a:not(.button):hover, .footer a:not(.button):focus-visible { color: #FF9DB0; }
+html[data-theme="dark"] .footer a:not(.button):hover, html[data-theme="dark"] .footer a:not(.button):focus-visible { color: #B3304D; }
+
+/* RTL: icons/arrows keep gap order when direction flips */
+html[dir="rtl"] :where(.nav-link, .button, .underlink, .header-cta) { flex-direction: row; }
+html[dir="rtl"] .footer-grid > div > a:not(.brand) { margin-left: auto; margin-right: 0; }
+
+/* ==========================================================================
+   LIGHT-MODE LEGIBILITY FIX
+   Cause: premium.css redefines --pink-ink as #B3304D (a pink), which beat the
+   chocolate --pink-ink in typography-contrast.css. On the pink panels
+   ("PICK YOUR PLEASURE" .category-band, "THE SCOOP FROM YOU" .testimonials,
+   .menu-end, stamps/stickers) that made pink-on-pink text (~1.8:1).
+   Fix: every pink panel gets one deep chocolate ink (--ink-on-pink, ~5:1),
+   and pink text on cream/tint surfaces uses the deeper --pink-ink.
+   Scoped to light mode only: dark mode is untouched.
+   ========================================================================== */
+html[data-theme="light"] { --ink-on-pink: #2E1814; }
+
+/* 1. Pink panels: all copy in deep chocolate, no washed-out opacity */
+html[data-theme="light"] :is(.category-band, .testimonials, .menu-end, .values,
+  .final-cta, .page-hero.pink, .article-hero, .party-packages, .h3-cta, .h3-tile.pink) {
+  color: var(--ink-on-pink);
+}
+html[data-theme="light"] :is(.category-band, .testimonials, .menu-end, .values,
+  .final-cta, .page-hero.pink, .article-hero, .party-packages, .h3-cta, .h3-tile.pink)
+  :is(h1, h2, h3, h4, p, small, blockquote, strong, em, b, .eyebrow, .stars,
+      .review-controls span, .review-controls button):not(.button *):not(.button):not(.category *) {
+  color: var(--ink-on-pink) !important;
+}
+html[data-theme="light"] :is(.category-band, .testimonials, .menu-end, .values,
+  .final-cta, .page-hero.pink, .article-hero, .party-packages, .h3-cta)
+  :is(p, small, .eyebrow) { opacity: 1; }
+html[data-theme="light"] :is(.testimonials, .category-band) .review-controls button {
+  border-color: var(--ink-on-pink);
+}
+
+/* 2. Stamps / stickers sitting on pink */
+html[data-theme="light"] :is(.stamp, .sticker) { color: var(--ink-on-pink); }
+html[data-theme="light"] .brand-mark { color: var(--ink-on-pink); }
+html[data-theme="light"] .skip,
+html[data-theme="light"] .proof span:not(:nth-child(2)),
+html[data-theme="light"] .h3-quote footer span,
+html[data-theme="light"] .h3-marquee,
+html[data-theme="light"] .h3-marquee :is(span, b, em),
+html[data-theme="light"] .error-img b,
+html[data-theme="light"] section.error-page b { color: var(--ink-on-pink); }
+html[data-theme="light"] .h3-tile.pink p { opacity: 1; }
+html[data-theme="light"] .auth-box a:not(.button) { color: var(--ink-on-pink); text-decoration: underline; text-underline-offset: 3px; }
+html[data-theme="light"] .xs-num { color: #B3304D; }
+html[data-theme="light"] main small:not([class]) { opacity: 1; }
+html[data-theme="light"] .h3-quote footer small { color: var(--ink-on-pink); opacity: 1; }
+
+/* 3. Pink text on cream / tint: switch to the deeper pink ink (#B3304D, ~5.5:1) */
+html[data-theme="light"] .reasons article > b,
+html[data-theme="light"] .h3-card .row a,
+html[data-theme="light"] .h3-handle a,
+html[data-theme="light"] .h3-quote .st,
+html[data-theme="light"] td a:not(.button) { color: #B3304D; }
+html[data-theme="light"] .xs-tint small,
+html[data-theme="light"] .xs-step small { color: #B3304D; }
+html[data-theme="light"] .offers small,
+html[data-theme="light"] td small,
+html[data-theme="light"] .form small { opacity: 1; }
+
+/* ==========================================================================
+   SECTION-HEADING ALIGNMENT
+   - Centred heads (.section-head, .h3-head): eyebrow, heading and intro share
+     one centre axis; the intro line is centred under the heading.
+   - Split heads (.xs-split .section-head, .reasons .section-head): eyebrow,
+     heading and intro all start on the same left edge at EVERY width. Before,
+     the flex children stayed centred on desktop, so the three lines started at
+     different x positions (e.g. 196 / 108 / 30 px).
+   - Headings wrap in balanced lines, intros avoid one-word last lines.
+   ========================================================================== */
+.xs-split .section-head,
+.reasons .section-head {
+  align-items: flex-start;
+  text-align: start;
+  margin-inline: 0;
+}
+.xs-split .section-head > *,
+.reasons .section-head > * { align-self: flex-start; margin-inline: 0; text-align: start; }
+.xs-split .section-head p { width: min(100%, 52ch); }
+
+.section-head,
+.h3-head { text-align: center; }
+.section-head > .eyebrow,
+.section-head > h2,
+.h3-head > .eyebrow,
+.h3-head > h2 { text-align: center; }
+.section-head > p,
+.h3-head > p { margin-inline: auto; text-align: center; }
+
+.section-head h2,
+.h3-head h2,
+.testimonials h2,
+.seasonal h2,
+.split h2,
+.visit h2,
+.final-cta h2,
+.values h2,
+.intro-grid h2 { text-wrap: balance; }
+.section-head p,
+.h3-head p { text-wrap: pretty; }
+
+/* RTL keeps the same logic */
+html[dir="rtl"] .xs-split .section-head,
+html[dir="rtl"] .reasons .section-head { align-items: flex-start; text-align: start; }
+
+/* split heads last, so they always win over the centred defaults above */
+.xs-split .section-head,
+.reasons .section-head { align-items: flex-start; text-align: start; margin-inline: 0; }
+.xs-split .section-head > .eyebrow,
+.xs-split .section-head > h2,
+.xs-split .section-head > p,
+.reasons .section-head > .eyebrow,
+.reasons .section-head > h2,
+.reasons .section-head > p { align-self: flex-start; margin-inline: 0; text-align: start; }
+
+/* ==========================================================================
+   CLIPPED HEADLINE TEXT FIX
+   The split-word reveal wraps every word in an overflow:hidden mask. The mask
+   was only as big as the text line box, so italic overhang (left/right tips of
+   t, h, s, f, y ...) and descenders (y, p, g) were sliced off, most visibly in
+   the pink italic <em> words ("three easy steps.", "good today?", ...).
+   The mask now has breathing room on every side, cancelled by negative margins
+   so line spacing and word spacing do not change.
+   ========================================================================== */
+.m-word {
+  padding: .14em .18em .3em;
+  margin: -.14em -.18em -.3em;
+}
+.m-word-inner { padding-inline: .01em; }
+h1 em, h2 em, h3 em { padding-inline: .04em; }
+
+/* ==========================================================================
+   GALLERY — perfect grid alignment
+   12 cells (2 tall + 2 wide + 4 single) fill a 4x3 grid on desktop and a 2x6
+   grid on tablet/phone with no gaps: dense packing + tiles ordered to fit.
+   When a filter is active the tiles drop their spans and centre as a tidy set
+   of equal tiles instead of leaving holes.
+   ========================================================================== */
+.gallery-grid { grid-auto-flow: dense; align-items: stretch; }
+.gallery-item { display: block; width: 100%; height: 100%; }
+.gallery-item[hidden] { display: none !important; }
+.gallery-item span {
+  left: 14px;
+  right: 14px;
+  bottom: 12px;
+  font-size: 11px;
+  line-height: 1.35;
+  letter-spacing: .1em;
+  text-align: start;
+}
+
+.gallery-grid.is-filtered {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+}
+.gallery-grid.is-filtered .gallery-item {
+  grid-column: auto;
+  grid-row: auto;
+  flex: 0 0 calc((100% - 30px) / 4);
+  width: auto;
+  height: 210px;
+}
+@media (max-width: 1024px) {
+  .gallery-grid.is-filtered { gap: 28px 20px; }
+  .gallery-grid.is-filtered .gallery-item {
+    flex-basis: calc((100% - 20px) / 2);
+    height: clamp(150px, 22vw, 210px);
+  }
+}
+@media (max-width: 639px) {
+  .gallery-grid.is-filtered { gap: 8px; }
+  .gallery-grid.is-filtered .gallery-item {
+    flex-basis: calc((100% - 8px) / 2);
+    height: clamp(125px, 39vw, 170px);
+  }
+}
+
+/* ==========================================================================
+   FIX 1 — .xs-icon always visible in light AND dark mode
+   The circle is a fixed brand pink with a fixed deep-brown glyph, so neither
+   theme can recolour one without the other. The glyph gets an explicit
+   stroke / size, so it still shows if the icon font script is slow or fails.
+   ========================================================================== */
+.xs-card .xs-icon {
+  background: #E85D75;
+  color: #2E1511;
+  box-shadow: 0 0 0 4px color-mix(in srgb, #E85D75 24%, transparent);
+}
+.xs-card .xs-icon :is(svg, i) {
+  display: block;
+  width: 26px;
+  height: 26px;
+  flex: none;
+  color: #2E1511;
+  stroke: currentColor;
+  fill: none;
+  stroke-width: 2;
+  opacity: 1;
+  visibility: visible;
+}
+html[data-theme="dark"] .xs-card .xs-icon { background: #F27A8E; box-shadow: 0 0 0 4px rgba(242, 122, 142, .22); }
+
+/* ==========================================================================
+   FIX 2 — CONTACT PAGE: everything one-by-one at every width
+   Hero, address block, form, map and quick answers stack in a single column
+   on desktop, tablet and mobile. All blocks share one centred column, one
+   left edge and the same gutter.
+   ========================================================================== */
+body.contact-page {
+  --contact-col: 880px;
+}
+body.contact-page .contact-grid {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 48px;
+  width: 100%;
+  max-width: calc(var(--contact-col) + var(--pad) * 2);
+  margin-inline: auto;
+  padding-inline: var(--pad);
+}
+body.contact-page .contact-grid > * { width: 100%; min-width: 0; }
+body.contact-page .contact-grid > div:first-child { display: grid; gap: 14px; justify-items: start; }
+body.contact-page .contact-grid > div:first-child > * { margin: 0; }
+body.contact-page .contact-grid > .form { max-width: none; }
+body.contact-page .contact-details { grid-template-columns: minmax(0, 1fr); }
+
+/* Quick answers: heading on top, accordion underneath, same column */
+body.contact-page .xs-split {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 32px;
+  max-width: var(--contact-col);
+  margin-inline: auto;
+}
+body.contact-page .xs-split .section-head {
+  position: static;
+  width: 100%;
+  margin: 0;
+  align-items: flex-start;
+  text-align: start;
+}
+body.contact-page .xs-split .section-head > * { align-self: flex-start; text-align: start; margin-inline: 0; }
+body.contact-page .xs-split .section-head p { width: min(100%, 52ch); }
+body.contact-page .xs-faq { width: 100%; }
+body.contact-page .xs-faq summary { grid-template-columns: minmax(0, 1fr) 22px; }
+body.contact-page .xs-faq details > p { padding-inline-end: 40px; }
+
+@media (max-width: 1024px) {
+  body.contact-page .contact-grid { gap: 36px; }
+  body.contact-page .xs-split { gap: 28px; }
+}
+@media (max-width: 640px) {
+  body.contact-page { --pad: 16px; }
+  body.contact-page .contact-grid { gap: 28px; }
+  body.contact-page .xs-split { gap: 22px; }
+  body.contact-page .xs-faq summary { font-size: 18px; padding: 18px 0; gap: 12px; }
+  body.contact-page .xs-faq details > p { padding-inline-end: 0; }
+}
+
+/* CONTACT PAGE — section headings centred on one axis (eyebrow, heading, intro) */
+body.contact-page .contact-grid > div:first-child {
+  justify-items: center;
+  text-align: center;
+}
+body.contact-page .contact-grid > div:first-child > * { margin-inline: auto; text-align: center; }
+body.contact-page .xs-split .section-head,
+body.contact-page .xs-split .section-head > .eyebrow,
+body.contact-page .xs-split .section-head > h2,
+body.contact-page .xs-split .section-head > p {
+  align-items: center;
+  align-self: center;
+  text-align: center;
+  margin-inline: auto;
+}
+body.contact-page .xs-split .section-head p { width: min(100%, 52ch); }
+body.contact-page .xs-faq summary { text-align: start; }
+
+/* ==========================================================================
+   FIX — "LET'S MAKE A PLAN" (party enquiry) section alignment
+   Cause: the heading column is position:sticky, so once the section stacks
+   (tablet / mobile) it floated on top of the first form rows. It now sticks
+   only beside the form on desktop and is a normal block when stacked.
+   ========================================================================== */
+.form-section {
+  width: 100%;
+  max-width: none;
+  margin-inline: 0;
+  padding-inline: var(--pad);
+  display: grid;
+  grid-template-columns: minmax(0, .8fr) minmax(0, 1.2fr);
+  column-gap: clamp(40px, 6vw, 96px);
+  row-gap: 32px;
+  align-items: start;
+}
+.form-section > div {
+  position: sticky;
+  top: 120px;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  text-align: start;
+}
+.form-section > div > * { margin-inline: 0; text-align: start; }
+.form-section > div > .eyebrow { margin-bottom: 14px; }
+.form-section > div > h2 { margin: 0 0 16px; }
+.form-section > div > p { max-width: 46ch; margin: 0; font-size: 15px; line-height: 1.8; opacity: .85; }
+.form-section > form { width: 100%; min-width: 0; margin: 0; }
+.form-section .form-grid { align-items: start; row-gap: 22px; }
+@media (max-width: 1024px) {
+  .form-section { grid-template-columns: minmax(0, 1fr); row-gap: 28px; }
+  .form-section > div { position: static; top: auto; }
+  .form-section > div > p { max-width: 56ch; }
+}
+@media (max-width: 639px) {
+  .form-section { padding-inline: 16px; row-gap: 22px; }
+  .form-section > div > p { font-size: 14px; }
+}
+
+/* ==========================================================================
+   FIX — TABLET / MOBILE MENU, "Home" dropdown (light + dark)
+   - the active link painted a second pink underline under its own border, so
+     the list looked doubled and the open Home group "spilled" over the rows
+   - the Home group is now a contained, indented block with a pink guide line
+   - the panel fits the viewport and scrolls inside itself
+   ========================================================================== */
+@media (max-width: 1024px) {
+  .mobile-nav {
+    max-height: calc(100dvh - 118px);
+    overflow-y: auto;
+    overflow-x: hidden;
+    overscroll-behavior: contain;
+    box-shadow: 0 24px 40px -16px rgba(67, 37, 31, .28);
+    border-bottom: 1px solid var(--line);
+  }
+  .mobile-nav .nav-link::after,
+  .mobile-nav .nav-link.active::after { display: none !important; content: none !important; }
+  .mobile-nav .nav-dropdown { overflow: hidden; border-bottom: 1px solid var(--line); }
+  .mobile-nav .nav-dropdown-toggle { border-bottom: 0 !important; }
+  .mobile-nav .nav-dropdown.open .dropdown-menu {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    margin: 0 0 14px;
+    padding: 4px 0;
+    border: 0;
+    border-inline-start: 2px solid var(--pink);
+    background: color-mix(in srgb, var(--pink) 8%, transparent);
+    box-shadow: none;
+  }
+  .mobile-nav .dropdown-menu a {
+    width: 100%;
+    min-height: 48px;
+    padding-block: 0;
+    padding-inline: 18px;
+    border: 0;
+    box-sizing: border-box;
+    font-size: 16px;
+    white-space: normal;
+  }
+  html[data-theme="light"] .mobile-nav .nav-dropdown.open > .nav-dropdown-toggle { color: #B3304D; }
+  html[data-theme="light"] .mobile-nav .dropdown-menu a.active { color: #B3304D; }
+  html[data-theme="light"] .mobile-nav .nav-link.active:not(.nav-dropdown-toggle) { color: #B3304D; }
+  .mobile-nav > .nav-link:last-of-type { border-bottom: 1px solid var(--line); }
+}
+
+/* ==========================================================================
+   FIX — FOOTER, light and dark mode
+   The footer used to flip to a cream panel in dark mode (dark text, washed
+   out icons, clashing with the dark page). It is now one deep-chocolate panel
+   in BOTH themes, with its own colour tokens so every child (links, social
+   icons, newsletter field, divider) keeps the same contrast either way.
+   Dark mode uses a slightly deeper tone so the footer still reads as its own
+   block against the page. The back-to-top button no longer covers the
+   bottom-bar links.
+   ========================================================================== */
+.footer,
+html[data-theme="light"] .footer,
+html[data-theme="dark"] .footer {
+  --fg: #FFF3E2;
+  --fg-soft: rgba(255, 243, 226, .82);
+  --accent: #FF9DB0;
+  --rule: rgba(255, 243, 226, .24);
+  background: #43251F;
+  color: var(--fg);
+  padding: 72px var(--pad) 84px;
+}
+html[data-theme="dark"] .footer { background: #2B1511; border-top: 1px solid var(--rule); }
+.footer :is(p, small, li, span) { color: var(--fg-soft); opacity: 1; }
+.footer .brand, .footer .brand span, .footer .brand small { color: var(--fg); opacity: 1; }
+.footer h3 { color: var(--fg); }
+.footer-grid h4, .footer-grid .eyebrow { color: var(--accent); }
+.footer-grid > div > a:not(.brand) { color: var(--fg-soft); opacity: 1; }
+.footer a:not(.button):hover, .footer a:not(.button):focus-visible,
+html[data-theme="dark"] .footer a:not(.button):hover,
+html[data-theme="dark"] .footer a:not(.button):focus-visible { color: var(--accent); opacity: 1; }
+.footer .brand-mark { background: #E85D75; color: #2B1511; }
+.footer .social a {
+  color: var(--fg);
+  border: 1px solid var(--rule);
+  background: transparent;
+}
+.footer .social a:hover { background: #E85D75; border-color: #E85D75; color: #2B1511; }
+.footer .newsletter { border-color: var(--rule); }
+.footer .newsletter input,
+.footer .newsletter input::placeholder { color: var(--fg); background: transparent; }
+.footer .newsletter input::placeholder { opacity: .72; }
+.footer .newsletter .button,
+html[data-theme="dark"] .footer .newsletter .button {
+  background: #E85D75; border-color: #E85D75; color: #2B1511;
+}
+.footer .newsletter .button:hover { background: var(--fg); border-color: var(--fg); }
+.footer .newsletter .button :is(svg, i) { color: inherit; }
+.footer-bottom {
+  border-top: 1px solid var(--rule);
+  opacity: 1;
+  color: var(--fg-soft);
+  align-items: center;
+  flex-wrap: wrap;
+  row-gap: 10px;
+}
+.footer-bottom a { color: var(--fg-soft); }
+.footer-bottom > span:last-child { margin-inline-end: 0; }
+@media (min-width: 641px) {
+  .footer-bottom > span:last-child { padding-inline-end: 56px; }
+}
+@media (max-width: 639px) {
+  .footer { padding: 48px 16px 84px; }
+}
+
+/* ==========================================================================
+   CONTACT PAGE — embedded Google map (same centred column as the rest)
+   ========================================================================== */
+body.contact-page .contact-map {
+  width: 100%;
+  max-width: calc(var(--contact-col, 880px) + var(--pad) * 2);
+  margin-inline: auto;
+  padding-inline: var(--pad);
+}
+body.contact-page .contact-map .section-head { margin: 0 0 32px; }
+.contact-map-wrap { width: 100%; border: 1px solid var(--line); background: var(--cream); }
+.contact-map-frame { position: relative; width: 100%; height: clamp(300px, 42vw, 420px); background: color-mix(in srgb, var(--pink) 12%, var(--cream)); }
+.contact-map-frame iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; display: block; }
+html[data-theme="dark"] .contact-map-frame iframe { filter: invert(.92) hue-rotate(180deg) saturate(.8) contrast(.95); }
+.contact-map-card {
+  display: flex; align-items: center; justify-content: space-between; gap: 20px;
+  padding: 20px 24px; border-top: 1px solid var(--line);
+}
+.contact-map-card > div { display: grid; gap: 4px; min-width: 0; }
+.contact-map-card strong { font-size: 13px; letter-spacing: .14em; }
+.contact-map-card small { font-size: 14px; opacity: 1; line-height: 1.5; }
+.contact-map-card .button { flex: none; white-space: nowrap; }
+@media (max-width: 639px) {
+  body.contact-page .contact-map { padding-inline: 16px; }
+  body.contact-page .contact-map .section-head { margin-bottom: 22px; }
+  .contact-map-card { flex-direction: column; align-items: stretch; text-align: center; padding: 18px 16px; }
+  .contact-map-card .button { width: 100%; }
+}
+
+/* ==========================================================================
+   ICON VISIBILITY — back-to-top arrow and blog "read" arrows (both themes)
+   ========================================================================== */
+html[data-theme="light"] .back-top { color: #2E1511; }
+html[data-theme="light"] .back-top :is(svg, i) { color: #2E1511; stroke: currentColor; }
+html[data-theme="dark"] .back-top :is(svg, i) { color: #FFF3E2; stroke: currentColor; }
+html[data-theme="light"] .underlink :is(svg, i) { color: currentColor; stroke: currentColor; }
+html[data-theme="dark"] .announcement a :is(svg, i) { color: #43251F; stroke: currentColor; }
+html[data-theme="light"] .announcement a :is(svg, i) { color: #FFF3E2; stroke: currentColor; }
+
+/* ==========================================================================
+   FULL-WIDTH SECTIONS
+   Every page section now runs on the same gutter (30px / 16px on phones).
+   The extra-content blocks (.xs-*) and the home-3 wrappers used to be capped
+   at 1280px and centred, which left them inset by ~80px against the
+   full-width sections around them on wide screens.
+   ========================================================================== */
+.xs-grid, .xs-split, .h3-wrap { max-width: none; width: 100%; }
+@media (max-width: 639px) { .xs { padding-inline: 16px; } }
+
+/* CONTACT PAGE — full width, one section after another */
+body.contact-page { --contact-col: none; }
+body.contact-page .contact-grid,
+body.contact-page .contact-map {
+  max-width: none;
+  width: 100%;
+  margin-inline: 0;
+  padding-inline: var(--pad);
+}
+body.contact-page .xs-split { max-width: none; width: 100%; margin-inline: 0; }
+body.contact-page .contact-grid > div:first-child { justify-items: center; }
+body.contact-page .contact-grid > .form {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  column-gap: 28px;
+  row-gap: 22px;
+  align-items: start;
+  padding: clamp(24px, 3vw, 44px);
+}
+body.contact-page .contact-grid > .form > div,
+body.contact-page .contact-grid > .form > label:has(textarea),
+body.contact-page .contact-grid > .form > .button,
+body.contact-page .contact-grid > .form > [data-form-status] { grid-column: 1 / -1; }
+body.contact-page .contact-grid > .form > .button { justify-self: start; }
+body.contact-page .contact-map-wrap { width: 100%; }
+body.contact-page .contact-map-frame { height: clamp(320px, 38vw, 520px); }
+@media (max-width: 767px) {
+  body.contact-page .contact-grid > .form { grid-template-columns: minmax(0, 1fr); }
+  body.contact-page .contact-grid,
+  body.contact-page .contact-map { padding-inline: 16px; }
+}
+
+/* TABLET + MOBILE MENU: one single-column list, Home group tinted with a pink guide line, order button at the bottom */
+@media (max-width: 1024px) {
+  .mobile-nav { display: grid; grid-template-columns: minmax(0, 1fr); column-gap: 0; align-content: start; }
+  .mobile-nav[hidden] { display: none !important; }
+  .mobile-nav > .button { display: flex !important; margin-top: 16px; width: 100%; }
+  .mobile-nav .nav-dropdown { grid-column: 1 / -1; }
+  .mobile-nav .nav-dropdown.open .dropdown-menu { margin: 0 0 8px; padding: 4px 0; }
+}
+
+/* contact map heading: centred on the page axis like the other section heads */
+body.contact-page .contact-map .section-head { margin: 0 auto 32px; max-width: 720px; width: 100%; }
+@media (max-width: 639px) { body.contact-page .contact-map .section-head { margin-bottom: 22px; } }
+
+/* ==========================================================================
+   TABLET ORPHAN CARDS (640–1024px)
+   When a two-column card grid ends with one lonely card, it now sits centred
+   under the pair above it, at exactly one column width (same width as the
+   cards above), instead of hugging the left edge.
+   ========================================================================== */
+@media (min-width: 640px) and (max-width: 1024px) {
+  .packages, .menu-grid, .blog-grid, .pair-grid, .quote-grid, .xs-grid:not(.xs-stats-grid) {
+    --grid-gap: 20px;
+    gap: var(--grid-gap);
+  }
+  .packages { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .packages > :last-child:nth-child(odd),
+  .menu-grid > :last-child:nth-child(odd),
+  .blog-grid > :last-child:nth-child(odd),
+  .pair-grid > :last-child:nth-child(odd),
+  .quote-grid > :last-child:nth-child(odd),
+  .xs-grid.xs-cols-3 > :last-child:nth-child(odd),
+  .xs-grid.xs-cols-4 > :last-child:nth-child(odd) {
+    grid-column: 1 / -1;
+    justify-self: center;
+    width: calc((100% - var(--grid-gap)) / 2);
+    max-width: none;
+    margin-inline: 0;
+  }
+}
+
+/* ==========================================================================
+   "A PACKAGE TO GET THINGS STARTED" — section animation
+   Heading block slides up line by line, cards rise with a soft scale and a
+   pink top edge that draws in, then each card's text (label, title, copy,
+   bullet list, price, button) follows in sequence. Triggered once on scroll.
+   ========================================================================== */
+html.pk-ready .party-packages .section-head > * {
+  opacity: 0; transform: translateY(26px);
+  transition: opacity .7s var(--premium-ease), transform .7s var(--premium-ease);
+  transition-delay: calc(var(--pk-i, 0) * 110ms);
+}
+html.pk-ready .party-packages.pk-in .section-head > * { opacity: 1; transform: none; }
+
+html.pk-ready .party-packages .packages > article {
+  position: relative;
+  opacity: 0; transform: translateY(48px) scale(.96);
+  transition: opacity .8s var(--premium-ease), transform .8s var(--premium-ease), box-shadow .4s ease;
+  transition-delay: calc(.25s + var(--pk-c, 0) * 160ms);
+}
+html.pk-ready .party-packages.pk-in .packages > article { opacity: 1; transform: none; }
+html.pk-ready .party-packages.pk-in .packages > article:hover { transform: translateY(-6px); transition-delay: 0s; }
+
+.party-packages .packages > article::before {
+  content: ""; position: absolute; inset-inline: 0; top: 0; height: 3px;
+  background: var(--pink); transform: scaleX(0); transform-origin: left center;
+}
+html[dir="rtl"] .party-packages .packages > article::before { transform-origin: right center; }
+html.pk-ready .party-packages.pk-in .packages > article::before {
+  transform: scaleX(1);
+  transition: transform .9s var(--premium-ease);
+  transition-delay: calc(.55s + var(--pk-c, 0) * 160ms);
+}
+
+html.pk-ready .party-packages .packages > article > :is(small, h3, p, ul, b, button) {
+  opacity: 0; transform: translateY(14px);
+  transition: opacity .55s ease, transform .55s var(--premium-ease);
+  transition-delay: calc(.45s + var(--pk-c, 0) * 160ms + var(--pk-t, 0) * 70ms);
+}
+html.pk-ready .party-packages.pk-in .packages > article > :is(small, h3, p, ul, b, button) { opacity: 1; transform: none; }
+html.pk-ready .party-packages .packages > article li {
+  opacity: 0; transform: translateX(-12px);
+  transition: opacity .5s ease, transform .5s var(--premium-ease);
+  transition-delay: calc(.8s + var(--pk-c, 0) * 160ms + var(--pk-l, 0) * 90ms);
+}
+html[dir="rtl"].pk-ready .party-packages .packages > article li { transform: translateX(12px); }
+html.pk-ready .party-packages.pk-in .packages > article li { opacity: 1; transform: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  html.pk-ready .party-packages *, .party-packages .packages > article::before {
+    opacity: 1 !important; transform: none !important; transition: none !important;
+  }
+}
+
+/* ==========================================================================
+   ABOUT PAGE — first sections: tighter vertical rhythm, aligned columns
+   The intro block ("We believe a great scoop…") and the "Our story" split
+   each carried 105px of top AND bottom padding, so ~210px of empty space
+   sat between them (and 105px under the hero). Spacing is now one even step,
+   and the heading and paragraphs share a centre line on desktop.
+   ========================================================================== */
+.page-hero + .intro-grid { padding-top: 72px; padding-bottom: 8px; }
+.intro-grid { align-items: center; row-gap: 24px; }
+.intro-grid > h2 { margin: 0; max-width: none; }
+.intro-grid > div { display: grid; gap: 18px; align-content: center; align-self: center; max-width: 560px; }
+.intro-grid > h2 { align-self: center; }
+.intro-grid > div > p { margin: 0; max-width: none; font-size: 16px; line-height: 1.8; }
+.intro-grid + .split { padding-top: 56px; }
+@media (max-width: 1024px) {
+  .page-hero + .intro-grid { padding-top: 48px; padding-bottom: 0; row-gap: 20px; }
+  .intro-grid > h2 { max-width: none; }
+  .intro-grid > div { max-width: 62ch; }
+  .intro-grid + .split { padding-top: 40px; }
+  .page-hero { row-gap: 32px; min-height: 0; }
+}
+@media (max-width: 639px) {
+  .page-hero + .intro-grid { padding-top: 36px; }
+  .intro-grid + .split { padding-top: 28px; }
+}
+
+
+/* ========================================================================== 
+   TARGETED REPAIR — TABLET / MOBILE NAVIGATION + ABOUT PAGE MEDIA ALIGNMENT
+   Keeps the existing markup and visual system; resolves conflicting older
+   breakpoint rules in this final cascade layer.
+   ========================================================================== */
+@media (max-width: 1024px) {
+  .site-header { position: sticky; isolation: isolate; }
+  .header-inner { position: relative; }
+  .header-actions { flex-wrap: nowrap; min-width: 0; }
+  .mobile-toggle {
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 42px;
+    width: 42px;
+    height: 42px;
+    padding: 0;
+    line-height: 1;
+  }
+  .mobile-toggle > svg,
+  .mobile-toggle > i { display: block; width: 18px; height: 18px; margin: 0; }
+
+  .mobile-nav {
+    position: absolute;
+    top: 100%;
+    inset-inline: 0;
+    z-index: 110;
+    display: flex !important;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0;
+    width: 100%;
+    max-height: calc(100vh - 110px);
+    max-height: calc(100dvh - 110px);
+    overflow-x: hidden;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    box-sizing: border-box;
+    padding: 12px var(--pad) 22px;
+    background: var(--cream);
+    color: var(--choc);
+    border-top: 1px solid var(--line);
+    box-shadow: 0 16px 28px rgba(67, 37, 31, .14);
+  }
+  .mobile-nav[hidden] { display: none !important; }
+  .mobile-nav > .nav-link,
+  .mobile-nav .nav-dropdown-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    min-height: 50px;
+    padding: 12px 0;
+    border: 0;
+    border-bottom: 1px solid var(--line);
+    font-size: 16px !important;
+    line-height: 1.35;
+    text-align: start;
+    white-space: normal;
+  }
+  .mobile-nav .nav-dropdown { display: block; width: 100%; }
+  .mobile-nav .nav-dropdown-toggle .dd-caret { flex: 0 0 7px; margin-inline-start: 12px; }
+  .mobile-nav .dropdown-menu {
+    position: static;
+    display: none;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0;
+    width: 100%;
+    margin: 0;
+    padding: 4px 0 8px;
+    border: 0;
+    border-bottom: 1px solid var(--line);
+    background: transparent;
+    box-shadow: none;
+    opacity: 1;
+    visibility: visible;
+    transform: none;
+  }
+  .mobile-nav .nav-dropdown.open .dropdown-menu { display: flex; }
+  .mobile-nav .dropdown-menu a {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    min-height: 44px;
+    padding: 10px 0 10px 18px;
+    padding-inline-start: 18px;
+    padding-inline-end: 0;
+    border: 0;
+    font-size: 15px;
+    line-height: 1.35;
+    white-space: normal;
+  }
+  .mobile-nav > .button {
+    display: flex !important;
+    align-self: stretch;
+    justify-content: center;
+    width: 100%;
+    min-height: 48px;
+    margin: 16px 0 0;
+  }
+}
+
+/* At tablet widths keep the order CTA in the header only. */
+@media (min-width: 768px) and (max-width: 1024px) {
+  .header-actions .header-cta {
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
+    min-height: 42px;
+    height: 42px;
+    padding-inline: 16px;
+    white-space: nowrap;
+  }
+  .mobile-nav > .button { display: none !important; }
+}
+
+/* On phones, move the CTA into the drawer to protect the header layout. */
+@media (max-width: 767px) {
+  .header-actions .header-cta { display: none !important; }
+  .header-inner { gap: 8px; }
+  .header-actions { gap: 6px; }
+  .mobile-toggle { flex-basis: 38px; width: 38px; height: 38px; }
+  .mobile-nav { max-height: calc(100vh - 96px); max-height: calc(100dvh - 96px); }
+  .mobile-nav > .button { display: flex !important; }
+}
+
+/* About page — keep the image and its paired copy on matching content axes. */
+body.about-page .page-hero,
+body.about-page .split {
+  align-items: center;
+}
+body.about-page .page-hero { min-height: 0; }
+@media (min-width: 1025px) {
+  body.about-page .page-hero { padding-block: 56px; }
+}
+body.about-page .page-hero > img {
+  display: block;
+  align-self: center;
+  width: 100%;
+  min-width: 0;
+  height: clamp(300px, 29vw, 400px);
+  margin: 0;
+  object-fit: cover;
+  object-position: center;
+}
+body.about-page .split-image {
+  align-self: center;
+  width: 100%;
+  height: clamp(420px, 40vw, 560px);
+  min-width: 0;
+  overflow: hidden;
+}
+body.about-page .split-image > img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+body.about-page .split > div:last-child {
+  align-self: center;
+  justify-self: stretch;
+  width: 100%;
+  max-width: 600px;
+  margin: 0;
+}
+
+@media (max-width: 1024px) {
+  body.about-page .page-hero { align-items: stretch; }
+  body.about-page .page-hero > img {
+    width: 100%;
+    height: clamp(260px, 38vw, 390px);
+  }
+  body.about-page .split { align-items: stretch; }
+  body.about-page .split-image { height: clamp(280px, 42vw, 390px); }
+  body.about-page .split > div:last-child { max-width: 68ch; }
+}
+@media (max-width: 639px) {
+  body.about-page .page-hero > img { height: clamp(220px, 64vw, 290px); }
+  body.about-page .split-image { height: clamp(230px, 64vw, 300px); }
+  body.about-page .split > div:last-child { max-width: none; }
+}
+
+/* ========================================================================== 
+   TABLET CARD ALIGNMENT — About: "From Idea to First Scoop" and
+   Offers: "How It Works". Keep three-item content grids balanced at every
+   tablet width: two matching columns, with the final card centred below.
+   ========================================================================== */
+@media (min-width: 640px) and (max-width: 1024px) {
+  body.about-page .pair-grid,
+  body.offers-page .xs-steps.xs-cols-3 {
+    --tablet-card-gap: 24px;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--tablet-card-gap);
+    align-items: stretch;
+  }
+
+  body.about-page .pair-grid > :last-child:nth-child(odd),
+  body.offers-page .xs-steps.xs-cols-3 > :last-child:nth-child(odd) {
+    grid-column: 1 / -1;
+    justify-self: center;
+    width: calc((100% - var(--tablet-card-gap)) / 2);
+    max-width: none;
+    margin: 0;
+  }
+
+  /* Keep the three image cards visually consistent and their copy aligned. */
+  body.about-page .pair-grid > article {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    height: 100%;
+    min-width: 0;
+  }
+  body.about-page .pair-grid > article > img {
+    display: block;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 16 / 10;
+    object-fit: cover;
+  }
+  body.about-page .pair-grid > article > h3 {
+    min-height: 2.4em;
+    margin-bottom: 8px;
+  }
+  body.about-page .pair-grid > article > p {
+    flex: 1 1 auto;
+    width: 100%;
+    margin-bottom: 0;
+  }
+
+  /* Number and copy share one clear row, with matching text start positions. */
+  body.offers-page .xs-steps.xs-cols-3 > .xs-step {
+    display: grid;
+    grid-template-columns: 56px minmax(0, 1fr);
+    align-content: start;
+    align-items: start;
+    column-gap: 18px;
+    row-gap: 0;
+    height: 100%;
+    min-width: 0;
+    padding-top: 8px;
+  }
+  body.offers-page .xs-steps.xs-cols-3 > .xs-step > .xs-num {
+    width: 56px;
+    height: 56px;
+    margin: 0;
+    font-size: 22px;
+  }
+  body.offers-page .xs-steps.xs-cols-3 > .xs-step > div {
+    min-width: 0;
+    width: 100%;
+  }
+  body.offers-page .xs-steps.xs-cols-3 > .xs-step h3 {
+    margin: 0 0 8px;
+    font-size: clamp(20px, 2.15vw, 23px);
+    line-height: 1.2;
+  }
+  body.offers-page .xs-steps.xs-cols-3 > .xs-step p {
+    width: 100%;
+    max-width: none;
+    margin: 0;
+    line-height: 1.65;
+  }
+}
+
+
+/* ==========================================================================
+   TABLET HEADER — larger, easier tap targets (<= 1024px)
+   ========================================================================== */
+@media (min-width: 640px) and (max-width: 1024px) {
+  .header-actions { gap: 10px; }
+  .header-actions .icon-btn,
+  .header-actions .mobile-toggle {
+    width: 48px; height: 48px; min-width: 48px; min-height: 48px; flex: 0 0 48px;
+  }
+  .header-actions .mobile-toggle svg,
+  .header-actions .mobile-toggle i { width: 22px; height: 22px; }
+  .header-actions .header-cta { min-height: 48px; }
+  .mobile-nav .nav-link,
+  .mobile-nav .dropdown-menu a { min-height: 56px; font-size: 17px; }
+  .mobile-nav > .button { min-height: 52px; }
+}
+
+/* ==========================================================================
+   LOGO LOCKUP — mark + wordmark, vertically centred and left-aligned.
+   Files: assets/images/logo/ (logo.svg, logo-light.svg, logo-mark.svg).
+   The wordmark is an inline outlined SVG that follows the text colour, so it
+   flips automatically in dark mode and in the footer.
+   ========================================================================== */
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  line-height: 0;
+  letter-spacing: 0;
+  font-size: 0;
+  flex: 0 0 auto;
+  margin-bottom: 0;
+}
+.brand-mark {
+  display: block;
+  width: 42px; height: 42px; flex: 0 0 42px;
+  border-radius: 0; background: transparent !important;
+  object-fit: contain;
+}
+.brand-word {
+  display: block;
+  height: 26px; width: auto; flex: 0 0 auto;
+  color: inherit; fill: currentColor;
+}
+.footer .brand-mark { width: 52px; height: 52px; flex-basis: 52px; }
+.footer .brand-word { height: 32px; }
+.footer .brand { margin-bottom: 22px; color: var(--cream); }
+@media (max-width: 639px) {
+  .brand { gap: 9px; }
+  .brand-mark { width: 36px; height: 36px; flex-basis: 36px; }
+  .brand-word { height: 22px; }
+  .footer .brand-mark { width: 46px; height: 46px; flex-basis: 46px; }
+  .footer .brand-word { height: 28px; }
+}
+
+/* ==========================================================================
+   FOOTER — tagline never clipped, social icons are self-contained SVGs
+   (the lucide brand icons were removed from lucide@latest, which left empty
+   boxes).
+   ========================================================================== */
+.footer-grid p {
+  margin: 0 0 6px;
+  padding-top: 2px;
+  line-height: 1.7;
+  overflow: visible;
+}
+.social { display: flex; align-items: center; gap: 10px; margin-top: 20px; }
+.social a {
+  width: 40px; height: 40px;
+  display: inline-flex; align-items: center; justify-content: center;
+  border-radius: 50%;
+  flex: 0 0 40px;
+}
+.social .social-icon { width: 18px; height: 18px; display: block; flex: none; }

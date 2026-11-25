@@ -1,0 +1,145 @@
+/* ==========================================================================
+   CONE & CO. — MOTION SYSTEM
+   Scroll reveals, light page entrance, card lift, image zoom and progress.
+   All effects respect prefers-reduced-motion.
+   ========================================================================== */
+
+@keyframes mPageIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes mRise {
+  from { opacity: 0; transform: translateY(22px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes mSoftZoom {
+  from { opacity: .78; transform: scale(1.025); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+html.has-motion body { animation: mPageIn .5s var(--motion-ease, ease) both; }
+
+.m-progress {
+  position: fixed;
+  z-index: 1200;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  background: var(--pink);
+  transform: scaleX(0);
+  transform-origin: left center;
+  pointer-events: none;
+  will-change: transform;
+}
+
+html[dir="rtl"] .m-progress { transform-origin: right center; }
+.site-header { will-change: transform; transition: transform .35s var(--motion-ease), box-shadow .25s ease; }
+.site-header.m-hide { transform: translateY(-105%); }
+.site-header:focus-within { transform: translateY(0); }
+
+html.has-motion .motion-reveal {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity .65s var(--motion-ease), transform .65s var(--motion-ease);
+  will-change: opacity, transform;
+}
+html.has-motion .motion-reveal.is-visible { opacity: 1; transform: translateY(0); }
+html.has-motion .motion-stagger > .motion-child {
+  opacity: 0;
+  transform: translateY(18px);
+  transition: opacity .55s var(--motion-ease), transform .55s var(--motion-ease);
+  transition-delay: calc(var(--motion-index, 0) * 70ms);
+}
+html.has-motion .motion-stagger.is-visible > .motion-child { opacity: 1; transform: translateY(0); }
+
+.hero .motion-hero-item { animation: mRise .7s var(--motion-ease) both; animation-delay: calc(var(--motion-index, 0) * 90ms); }
+.hero .hero-visual img { animation: mSoftZoom 1.1s var(--motion-ease) both; }
+
+:where(.product-card, .blog-card, .packages article, .category, .gallery-item) {
+  transition: transform .3s var(--motion-ease), box-shadow .3s ease;
+}
+.product-card:hover,
+.blog-card:hover,
+.packages article:hover { transform: translateY(-4px); }
+.product-photo img,
+.blog-card img,
+.category img,
+.gallery-item img { transition: transform .65s var(--motion-ease); }
+.product-card:hover .product-photo img,
+.blog-card:hover img,
+.category:hover img,
+.gallery-item:hover img { transform: scale(1.045); }
+.button, .icon-btn, .mobile-toggle, .review-controls button, .back-top { transition-timing-function: var(--motion-ease); }
+
+html.m-theme-fade,
+html.m-theme-fade body { transition: background-color .45s ease, color .45s ease; }
+
+@media (hover: hover) and (pointer: fine) and (min-width: 1025px) {
+  .hero-visual { transform: perspective(1200px) rotateX(var(--hero-rx, 0deg)) rotateY(var(--hero-ry, 0deg)); transition: transform .4s ease-out; }
+}
+
+@media (hover: none), (max-width: 767px) {
+  .product-card:hover, .blog-card:hover, .packages article:hover { transform: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html.has-motion body,
+  html.has-motion .motion-reveal,
+  html.has-motion .motion-stagger > .motion-child,
+  .hero .motion-hero-item,
+  .hero .hero-visual img {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+    will-change: auto !important;
+  }
+  .m-progress { display: none !important; }
+  .site-header { transform: none !important; }
+  .product-card:hover, .blog-card:hover, .packages article:hover { transform: none !important; }
+}
+
+/* Cursor spotlight and restrained 3D lift, translated to the pink accent. */
+.m-card {
+  position: relative;
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+.m-card.m-tilting {
+  transition: transform .12s ease-out, box-shadow .35s var(--motion-ease), border-color .25s ease;
+}
+.m-glow {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  border-radius: inherit;
+  background: radial-gradient(340px circle at var(--mx, 50%) var(--my, 50%), rgba(232, 93, 117, .14), transparent 58%);
+  opacity: 0;
+  transition: opacity .35s ease;
+  pointer-events: none;
+}
+.m-card:hover > .m-glow { opacity: 1; }
+
+/* Split headings use the same clipped-word reveal as the reference system. */
+.m-word {
+  display: inline-block;
+  overflow: hidden;
+  vertical-align: top;
+  padding-bottom: .12em;
+  margin-bottom: -.12em;
+}
+.m-word-inner {
+  display: inline-block;
+  transform: translate3d(0, 112%, 0) rotate(2deg);
+  transform-origin: 0 100%;
+}
+.m-split.m-in .m-word-inner {
+  animation: mRise .8s var(--motion-ease) both;
+  animation-delay: calc(var(--word-index, 0) * 38ms);
+}
+
+@media (hover: none), (max-width: 767px) {
+  .m-glow { display: none; }
+  .m-card { transform: none !important; }
+}

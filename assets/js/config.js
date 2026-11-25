@@ -1,0 +1,1 @@
+window.STACKLY_CONFIG = { whatsappNumber: '15550142020', businessName: 'Cone & Co.', businessPhone: '+1 (555) 014-2020', businessEmail: 'hello@coneandco.example' }; // Replace sample details before launch.
